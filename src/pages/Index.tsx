@@ -1,12 +1,65 @@
-// Update this page (the content is just a fallback if you fail to update the page)
 
-const Index = () => {
+import React from 'react';
+import { Search, Bell } from 'lucide-react';
+import { categories, mockProducts } from '@/lib/mockData';
+import SearchBar from '@/components/ui/SearchBar';
+import ProductList from '@/components/products/ProductList';
+
+const Index: React.FC = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="app-container px-4 pt-4">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-2xl font-bold text-gray-900">ShopperFlow</h1>
+        <button className="p-2 text-gray-600 relative">
+          <Bell size={24} />
+          <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+        </button>
       </div>
+      
+      <SearchBar 
+        onSearch={(query) => console.log(query)} 
+        onFilterClick={() => console.log('Filter clicked')}
+      />
+      
+      <div className="my-4 overflow-x-auto">
+        <div className="flex space-x-2 pb-2">
+          {categories.map((category, index) => (
+            <button
+              key={index}
+              className={`whitespace-nowrap px-4 py-2 rounded-full text-sm ${
+                index === 0 
+                  ? 'bg-primary text-white' 
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {category}
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      <div className="mb-6">
+        <div className="bg-primary/10 rounded-xl p-4 relative overflow-hidden">
+          <div className="w-3/4">
+            <h2 className="text-xl font-bold mb-2">Summer Sale!</h2>
+            <p className="text-gray-700 mb-4">Get up to 50% off on selected items</p>
+            <button className="bg-primary text-white px-4 py-2 rounded-lg text-sm">
+              Shop Now
+            </button>
+          </div>
+          <div className="absolute right-0 bottom-0 h-full w-1/3 bg-primary/20 rounded-l-full"></div>
+        </div>
+      </div>
+      
+      <ProductList 
+        products={mockProducts.slice(0, 4)} 
+        title="Featured Products" 
+      />
+      
+      <ProductList 
+        products={mockProducts.slice(4)} 
+        title="New Arrivals" 
+      />
     </div>
   );
 };

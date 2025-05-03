@@ -5,7 +5,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
 import { Button } from "@/components/ui/button";
-import { Google, Facebook, Mail, Smartphone } from 'lucide-react';
+import { Mail, Smartphone } from 'lucide-react';
 
 const AuthForms: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -273,12 +273,12 @@ const AuthForms: React.FC = () => {
         
         <div className="mt-6 grid grid-cols-2 gap-3">
           <Button variant="outline" className="flex items-center justify-center py-2">
-            <Google className="w-5 h-5 mr-2" />
-            Google
+            <Mail className="w-5 h-5 mr-2" />
+            Email
           </Button>
           <Button variant="outline" className="flex items-center justify-center py-2">
-            <Facebook className="w-5 h-5 mr-2" />
-            Facebook
+            <Smartphone className="w-5 h-5 mr-2" />
+            Phone
           </Button>
         </div>
       </div>

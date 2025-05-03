@@ -8,7 +8,7 @@ const CartPage: React.FC = () => {
   const navigate = useNavigate();
   
   return (
-    <div className="app-container px-4 pt-4">
+    <div className="app-container px-4 pt-4 pb-20">
       <div className="flex items-center mb-4">
         <button 
           onClick={() => navigate(-1)}

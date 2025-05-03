@@ -1,12 +1,13 @@
 
 import React from 'react';
-import { Outlet, Link } from 'react-router-dom';
+import { Outlet, Link, useNavigate } from 'react-router-dom';
 import AdminNavigation from './AdminNavigation';
 import { ChevronLeft, Settings } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 
 const AdminLayout: React.FC = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   return (
     <div className="app-container flex flex-col min-h-screen bg-gray-50">
@@ -22,7 +23,9 @@ const AdminLayout: React.FC = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <Settings className="h-5 w-5 text-gray-600" />
+            <button>
+              <Settings className="h-5 w-5 text-gray-600" />
+            </button>
             <div className="flex items-center">
               <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center">
                 {user?.name?.charAt(0) || 'A'}
@@ -33,8 +36,8 @@ const AdminLayout: React.FC = () => {
         </div>
       </header>
       
-      {/* Main Content */}
-      <div className="flex-1">
+      {/* Main Content - Add padding to ensure content isn't hidden under bottom nav */}
+      <div className="flex-1 pb-16">
         <Outlet />
       </div>
       

@@ -3,6 +3,7 @@ import React from 'react';
 import { ShoppingCart as CartIcon } from 'lucide-react';
 import CartItem from './CartItem';
 import { useCart } from '@/hooks/useCart';
+import { useNavigate } from 'react-router-dom';
 
 const ShoppingCart: React.FC = () => {
   const { 
@@ -12,6 +13,8 @@ const ShoppingCart: React.FC = () => {
     clearCart,
     subtotal 
   } = useCart();
+  
+  const navigate = useNavigate();
 
   if (items.length === 0) {
     return (
@@ -63,7 +66,10 @@ const ShoppingCart: React.FC = () => {
           <span>${subtotal.toFixed(2)}</span>
         </div>
         
-        <button className="w-full bg-primary text-white font-medium py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors">
+        <button 
+          className="w-full bg-primary text-white font-medium py-3 px-4 rounded-lg hover:bg-primary/90 transition-colors"
+          onClick={() => navigate('/checkout')}
+        >
           Proceed to Checkout
         </button>
       </div>

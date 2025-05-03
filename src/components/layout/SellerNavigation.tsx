@@ -1,13 +1,13 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Search, ShoppingCart, User, Heart, Bell } from 'lucide-react';
+import { BarChart, Package, List, Percent, MessageCircle, Video, User } from 'lucide-react';
 
-const BottomNavigation = () => {
+const SellerNavigation = () => {
   return (
     <nav className="bottom-nav h-16 flex items-center justify-around px-4">
       <NavLink 
-        to="/" 
+        to="/seller" 
         className={({ isActive }) => 
           `flex flex-col items-center justify-center w-1/5 ${
             isActive ? 'text-primary' : 'text-gray-500'
@@ -15,59 +15,59 @@ const BottomNavigation = () => {
         }
         end
       >
-        <Home size={24} />
-        <span className="text-xs mt-1">Home</span>
+        <BarChart size={24} />
+        <span className="text-xs mt-1">Dashboard</span>
       </NavLink>
       
       <NavLink 
-        to="/products" 
+        to="/seller/products" 
         className={({ isActive }) => 
           `flex flex-col items-center justify-center w-1/5 ${
             isActive ? 'text-primary' : 'text-gray-500'
           }`
         }
       >
-        <Search size={24} />
-        <span className="text-xs mt-1">Search</span>
+        <Package size={24} />
+        <span className="text-xs mt-1">Products</span>
       </NavLink>
       
       <NavLink 
-        to="/wishlist" 
+        to="/seller/orders" 
         className={({ isActive }) => 
           `flex flex-col items-center justify-center w-1/5 ${
             isActive ? 'text-primary' : 'text-gray-500'
           }`
         }
       >
-        <Heart size={24} />
-        <span className="text-xs mt-1">Wishlist</span>
+        <List size={24} />
+        <span className="text-xs mt-1">Orders</span>
       </NavLink>
       
       <NavLink 
-        to="/notifications" 
+        to="/seller/promotions" 
         className={({ isActive }) => 
           `flex flex-col items-center justify-center w-1/5 ${
             isActive ? 'text-primary' : 'text-gray-500'
           }`
         }
       >
-        <Bell size={24} />
-        <span className="text-xs mt-1">Alerts</span>
+        <Percent size={24} />
+        <span className="text-xs mt-1">Promos</span>
       </NavLink>
       
       <NavLink 
-        to="/profile" 
+        to="/seller/chat" 
         className={({ isActive }) => 
           `flex flex-col items-center justify-center w-1/5 ${
             isActive ? 'text-primary' : 'text-gray-500'
           }`
         }
       >
-        <User size={24} />
-        <span className="text-xs mt-1">Profile</span>
+        <MessageCircle size={24} />
+        <span className="text-xs mt-1">Chat</span>
       </NavLink>
     </nav>
   );
 };
 
-export default BottomNavigation;
+export default SellerNavigation;

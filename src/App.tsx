@@ -82,9 +82,9 @@ const App = () => (
               <Route 
                 path="/seller" 
                 element={
-                  <ProtectedRoute requiredRole="seller">
+                  // <ProtectedRoute requiredRole="seller">
                     <SellerLayout />
-                  </ProtectedRoute>
+                  // </ProtectedRoute>
                 }
               >
                 <Route index element={<SellerDashboardPage />} />
@@ -100,9 +100,9 @@ const App = () => (
               <Route 
                 path="/admin" 
                 element={
-                  <ProtectedRoute requiredRole="admin">
+                  // <ProtectedRoute requiredRole="admin">
                     <AdminLayout />
-                  </ProtectedRoute>
+                  // </ProtectedRoute>
                 }
               >
                 <Route index element={<AdminDashboardPage />} />

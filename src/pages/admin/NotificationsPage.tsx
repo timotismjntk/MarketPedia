@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Bell, Send, Users, Tag, Calendar, Search, Edit, Trash, Check } from 'lucide-react';
+import { Bell, Send, Users, Tag, Calendar, Search, Edit, Trash, Check, Eye } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";

@@ -1,7 +1,8 @@
 
 import React, { useState } from 'react';
-import { ShoppingCart, Heart, Star, Truck, ShieldCheck } from 'lucide-react';
+import { ShoppingCart, Heart, Star, Truck, ShieldCheck, MessageSquare } from 'lucide-react';
 import { Product } from '@/lib/mockData';
+import ChatModal from '@/components/ui/chat-modal';
 
 interface ProductDetailProps {
   product: Product;
@@ -83,16 +84,23 @@ const ProductDetail: React.FC<ProductDetailProps> = ({ product, onAddToCart }) =
           </div>
         </div>
 
-        <button 
-          onClick={onAddToCart}
-          disabled={!product.inStock}
-          className={`w-full py-3 px-4 rounded-lg text-white flex items-center justify-center font-medium mb-3 ${
-            product.inStock ? 'bg-primary hover:bg-primary/90' : 'bg-gray-300 cursor-not-allowed'
-          }`}
-        >
-          <ShoppingCart className="mr-2 h-5 w-5" />
-          Add to Cart
-        </button>
+        <div className="grid grid-cols-1 gap-3 mb-4">
+          <button 
+            onClick={onAddToCart}
+            disabled={!product.inStock}
+            className={`w-full py-3 px-4 rounded-lg text-white flex items-center justify-center font-medium ${
+              product.inStock ? 'bg-primary hover:bg-primary/90' : 'bg-gray-300 cursor-not-allowed'
+            }`}
+          >
+            <ShoppingCart className="mr-2 h-5 w-5" />
+            Add to Cart
+          </button>
+          
+          <ChatModal 
+            productId={product.id}
+            sellerName={product.seller}
+          />
+        </div>
         
         <div className="mt-4 space-y-3">
           <div className="flex items-center text-sm text-gray-500">

@@ -1,7 +1,7 @@
 
-import React, { useState } from 'react';
-import { ArrowLeft, Send } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Send, MessageSquare } from 'lucide-react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
 // Mock chat data
 const mockChats = [
@@ -11,7 +11,10 @@ const mockChats = [
     image: '/placeholder.svg',
     lastMessage: 'Yes, the earbuds are waterproof and have a 6-hour battery life.',
     time: '10:30 AM',
-    unread: 2
+    unread: 2,
+    isProductChat: true,
+    productId: '1',
+    productName: 'Modern Wireless Earbuds'
   },
   {
     id: 'chat2',
@@ -19,7 +22,10 @@ const mockChats = [
     image: '/placeholder.svg',
     lastMessage: 'We have it in Medium size in blue, red and black colors.',
     time: 'Yesterday',
-    unread: 0
+    unread: 0,
+    isProductChat: true,
+    productId: '3',
+    productName: 'Classic Cotton T-Shirt'
   },
   {
     id: 'chat3',
@@ -27,7 +33,8 @@ const mockChats = [
     image: '/placeholder.svg',
     lastMessage: 'Is there anything else I can help you with?',
     time: 'May 2',
-    unread: 0
+    unread: 0,
+    isProductChat: false
   }
 ];
 
@@ -69,6 +76,20 @@ const ChatPage: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id: string }>();
   const [message, setMessage] = useState('');
+  const location = useLocation();
+  const [chats, setChats] = useState(mockChats);
+  
+  useEffect(() => {
+    // Check if this is a product ID rather than a chat ID
+    // In a real app, this would be handled by the API
+    const isProductId = id && !mockChats.some(chat => chat.id === id);
+    
+    if (isProductId) {
+      console.log("Creating new chat for product:", id);
+      // Create a new chat for this product
+      // In a real app, this would check if a chat already exists for this product
+    }
+  }, [id]);
   
   // If no specific chat is selected, show the chat list
   if (!id) {
@@ -84,51 +105,77 @@ const ChatPage: React.FC = () => {
           <h1 className="text-xl font-semibold ml-2">Messages</h1>
         </div>
         
-        <div className="space-y-3">
-          {mockChats.map((chat) => (
-            <div 
-              key={chat.id}
-              className="p-3 rounded-lg border border-gray-100 flex items-center"
-              onClick={() => navigate(`/chat/${chat.id}`)}
-            >
-              <div className="relative">
-                <div className="w-12 h-12 rounded-full overflow-hidden">
-                  <img 
-                    src={chat.image} 
-                    alt={chat.name} 
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-                {chat.unread > 0 && (
-                  <div className="absolute top-0 right-0 w-5 h-5 bg-primary text-white rounded-full text-xs flex items-center justify-center">
-                    {chat.unread}
+        {chats.length > 0 ? (
+          <div className="space-y-3">
+            {chats.map((chat) => (
+              <div 
+                key={chat.id}
+                className="p-3 rounded-lg border border-gray-100 flex items-center"
+                onClick={() => navigate(`/chat/${chat.id}`)}
+              >
+                <div className="relative">
+                  <div className="w-12 h-12 rounded-full overflow-hidden">
+                    <img 
+                      src={chat.image} 
+                      alt={chat.name} 
+                      className="w-full h-full object-cover"
+                    />
                   </div>
-                )}
-              </div>
-              
-              <div className="ml-3 flex-1">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-medium">{chat.name}</h3>
-                  <span className="text-xs text-gray-500">{chat.time}</span>
+                  {chat.unread > 0 && (
+                    <div className="absolute top-0 right-0 w-5 h-5 bg-primary text-white rounded-full text-xs flex items-center justify-center">
+                      {chat.unread}
+                    </div>
+                  )}
                 </div>
                 
-                <p className="text-sm text-gray-600 line-clamp-1 mt-1">
-                  {chat.lastMessage}
-                </p>
+                <div className="ml-3 flex-1">
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-medium">{chat.name}</h3>
+                    <span className="text-xs text-gray-500">{chat.time}</span>
+                  </div>
+                  
+                  {chat.isProductChat && chat.productName && (
+                    <div className="text-xs text-primary mb-1">
+                      Re: {chat.productName}
+                    </div>
+                  )}
+                  
+                  <p className="text-sm text-gray-600 line-clamp-1">
+                    {chat.lastMessage}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center py-12">
+            <MessageSquare size={48} className="text-gray-300 mb-4" />
+            <p className="text-gray-500">No messages yet</p>
+            <p className="text-gray-400 text-sm mt-1">
+              Start a conversation with a seller from any product page
+            </p>
+          </div>
+        )}
       </div>
     );
   }
   
   // Find the current chat
-  const currentChat = mockChats.find(chat => chat.id === id) || mockChats[0];
+  const currentChat = chats.find(chat => chat.id === id) || {
+    id: 'new',
+    name: 'Seller',
+    image: '/placeholder.svg',
+    lastMessage: '',
+    time: 'Now',
+    unread: 0,
+    isProductChat: true,
+    productId: id
+  };
   
   const handleSend = () => {
     if (message.trim()) {
       // Would typically send to API here
+      console.log("Sending message:", message);
       setMessage('');
     }
   };
@@ -154,7 +201,11 @@ const ChatPage: React.FC = () => {
             </div>
             <div className="ml-3">
               <h2 className="font-medium">{currentChat.name}</h2>
-              <p className="text-xs text-gray-500">Usually responds in 10 minutes</p>
+              {currentChat.isProductChat && currentChat.productName ? (
+                <p className="text-xs text-primary">Re: {currentChat.productName}</p>
+              ) : (
+                <p className="text-xs text-gray-500">Usually responds in 10 minutes</p>
+              )}
             </div>
           </div>
         </div>
@@ -194,6 +245,12 @@ const ChatPage: React.FC = () => {
             onChange={(e) => setMessage(e.target.value)}
             placeholder="Type a message..."
             className="flex-1 p-3 border border-gray-300 rounded-full focus:outline-none focus:ring-1 focus:ring-primary"
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && message.trim()) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
           />
           <button 
             className={`ml-2 p-3 rounded-full ${

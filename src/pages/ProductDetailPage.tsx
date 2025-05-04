@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import ProductDetail from '@/components/products/ProductDetail';
+import ProductReviews from '@/components/products/ProductReviews';
 import { mockProducts, Product } from '@/lib/mockData';
 import { useCart } from '@/hooks/useCart';
 
@@ -82,6 +83,11 @@ const ProductDetailPage: React.FC = () => {
         product={product} 
         onAddToCart={() => addItem(product, 1)}
       />
+      
+      {/* Product Reviews */}
+      <div className="p-4">
+        <ProductReviews productId={product.id} />
+      </div>
       
       <div className="p-4">
         <h2 className="text-lg font-semibold mb-4">Similar Products</h2>

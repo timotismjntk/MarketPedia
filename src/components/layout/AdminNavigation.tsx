@@ -1,7 +1,10 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Users, Shield, BarChart, MessageCircle, Percent, Settings } from 'lucide-react';
+import { 
+  Users, Shield, BarChart, MessageCircle, Percent, 
+  Settings, Bell, Database, Tag, FileText 
+} from 'lucide-react';
 
 const AdminNavigation = () => {
   return (
@@ -40,7 +43,7 @@ const AdminNavigation = () => {
             }`
           }
         >
-          <Shield size={24} />
+          <Tag size={24} />
           <span className="text-xs mt-1">Categories</span>
         </NavLink>
         

@@ -44,6 +44,9 @@ import AdminCategoriesPage from "./pages/admin/CategoriesPage";
 import AdminPromotionsPage from "./pages/admin/PromotionsPage";
 import AdminReportsPage from "./pages/admin/ReportsPage";
 import AdminComplaintsPage from "./pages/admin/ComplaintsPage";
+import AdminModerationPage from "./pages/admin/ModerationPage";
+import AdminNotificationsPage from "./pages/admin/NotificationsPage";
+import AdminCommissionPage from "./pages/admin/CommissionPage";
 
 import NotFound from "./pages/NotFound";
 
@@ -113,6 +116,9 @@ const App = () => (
                 <Route path="promotions" element={<AdminPromotionsPage />} />
                 <Route path="reports" element={<AdminReportsPage />} />
                 <Route path="complaints" element={<AdminComplaintsPage />} />
+                <Route path="moderation" element={<AdminModerationPage />} />
+                <Route path="notifications" element={<AdminNotificationsPage />} />
+                <Route path="settings/commission" element={<AdminCommissionPage />} />
               </Route>
               
               {/* 404 */}

@@ -35,6 +35,7 @@ import SellerOrdersPage from "./pages/seller/OrdersPage";
 import SellerPromotionsPage from "./pages/seller/PromotionsPage";
 import SellerChatPage from "./pages/seller/ChatPage";
 import SellerLiveStreamPage from "./pages/seller/LiveStreamPage";
+import SellerUploadPage from "./pages/seller/UploadPage";
 
 // Admin Pages
 import AdminDashboardPage from "./pages/admin/DashboardPage";
@@ -94,6 +95,7 @@ const App = () => (
                 <Route path="chat" element={<SellerChatPage />} />
                 <Route path="chat/:id" element={<SellerChatPage />} />
                 <Route path="live" element={<SellerLiveStreamPage />} />
+                <Route path="upload" element={<SellerUploadPage />} />
               </Route>
               
               {/* Admin Routes */}

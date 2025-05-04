@@ -68,14 +68,6 @@ const ChatModal: React.FC<ChatModalProps> = ({ productId, sellerName, sellerAvat
               </Avatar>
               <SheetTitle>{sellerName}</SheetTitle>
             </div>
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => setIsOpen(false)}
-              className="rounded-full h-8 w-8"
-            >
-              <X size={18} />
-            </Button>
           </div>
         </SheetHeader>
         

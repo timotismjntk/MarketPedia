@@ -1,20 +1,35 @@
 
 import React from 'react';
-import { Search, Bell } from 'lucide-react';
+import { MessageCircleMore, Bell } from 'lucide-react';
 import { categories, mockProducts } from '@/lib/mockData';
 import SearchBar from '@/components/ui/SearchBar';
 import ProductList from '@/components/products/ProductList';
+import { Link } from 'react-router-dom';
 
 const Index: React.FC = () => {
   return (
     <div className="app-container px-4 pt-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-gray-900">ShopperFlow</h1>
-        <button className="p-2 text-gray-600 relative">
-          <Bell size={24} />
-          <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-        </button>
-      </div>
+  <h1 className="text-2xl font-bold text-gray-900">MartPedia</h1>
+  <div className="flex items-center gap-3">
+    <Link to={`/notifications`}>
+      <button className="p-2 text-gray-600 relative">
+        <Bell size={24} />
+        <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+      </button>
+    </Link>
+    <Link to={`/notifications`}>
+      <button className="p-2 text-gray-600 relative">
+        <MessageCircleMore size={24} />
+        {/* Badge with message count */}
+        <span className="absolute -top-1 -right-1 bg-primary text-white text-xs font-medium px-1.5 py-0.5 rounded-full">
+          2
+        </span>
+      </button>
+    </Link>
+  </div>
+</div>
+
       
       <SearchBar 
         onSearch={(query) => console.log(query)} 

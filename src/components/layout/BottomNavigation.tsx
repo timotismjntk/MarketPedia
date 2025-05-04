@@ -23,18 +23,6 @@ const BottomNavigation = () => {
       </NavLink>
       
       <NavLink 
-        to="/products" 
-        className={({ isActive }) => 
-          `flex flex-col items-center justify-center w-1/6 ${
-            isActive ? 'text-primary' : 'text-gray-500'
-          }`
-        }
-      >
-        <Search size={24} />
-        <span className="text-xs mt-1">Search</span>
-      </NavLink>
-      
-      <NavLink 
         to="/cart" 
         className={({ isActive }) => 
           `flex flex-col items-center justify-center w-1/6 ${
@@ -63,18 +51,6 @@ const BottomNavigation = () => {
       >
         <Heart size={24} />
         <span className="text-xs mt-1">Wishlist</span>
-      </NavLink>
-      
-      <NavLink 
-        to="/notifications" 
-        className={({ isActive }) => 
-          `flex flex-col items-center justify-center w-1/6 ${
-            isActive ? 'text-primary' : 'text-gray-500'
-          }`
-        }
-      >
-        <Bell size={24} />
-        <span className="text-xs mt-1">Alerts</span>
       </NavLink>
       
       <NavLink 

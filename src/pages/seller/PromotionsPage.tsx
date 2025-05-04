@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Plus, Trash2, Edit, Calendar, Clock, Tag, Package } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Select,
@@ -35,8 +35,22 @@ import {
 } from "@/components/ui/tabs";
 import { useToast } from '@/hooks/use-toast';
 
+// Define promotion type interface
+interface BasePromotion {
+  id: string;
+  name: string;
+  type: 'discount' | 'fixed' | 'bundle' | 'flash_sale' | 'shipping';
+  products: string;
+  startDate: string;
+  endDate: string;
+  status: string;
+  minPurchase?: number;
+  value?: number;
+  description?: string;
+}
+
 // Mock data for promotions
-const mockPromotions = [
+const mockPromotions: BasePromotion[] = [
   {
     id: 'promo-1',
     name: 'Diskon Hari Raya',
@@ -89,15 +103,27 @@ const promotionTypes = [
   { id: 'shipping', name: 'Gratis Ongkir', icon: Package },
 ];
 
+// Form data interface
+interface PromotionFormData {
+  name: string;
+  type: BasePromotion['type'];
+  value: number;
+  minPurchase: number;
+  products: string;
+  startDate: string;
+  endDate: string;
+  description: string;
+}
+
 const SellerPromotionsPage = () => {
   const { toast } = useToast();
-  const [promotions, setPromotions] = useState(mockPromotions);
+  const [promotions, setPromotions] = useState<BasePromotion[]>(mockPromotions);
   const [searchQuery, setSearchQuery] = useState('');
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [editingPromotion, setEditingPromotion] = useState<any>(null);
+  const [editingPromotion, setEditingPromotion] = useState<BasePromotion | null>(null);
   
   // New promotion form state
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<PromotionFormData>({
     name: '',
     type: 'discount',
     value: 0,
@@ -127,7 +153,7 @@ const SellerPromotionsPage = () => {
     setIsDialogOpen(true);
   };
 
-  const handleEditPromotion = (promotion: any) => {
+  const handleEditPromotion = (promotion: BasePromotion) => {
     setEditingPromotion(promotion);
     setFormData({
       name: promotion.name,
@@ -178,7 +204,7 @@ const SellerPromotionsPage = () => {
       // Update existing promotion
       setPromotions(promotions.map(p => 
         p.id === editingPromotion.id ? 
-        { ...formData, id: editingPromotion.id, status: editingPromotion.status } : 
+        { ...p, ...formData } : 
         p
       ));
       toast({
@@ -187,7 +213,7 @@ const SellerPromotionsPage = () => {
       });
     } else {
       // Add new promotion
-      const newPromotion = {
+      const newPromotion: BasePromotion = {
         ...formData,
         id: `promo-${Date.now()}`,
         status: new Date(formData.startDate) > new Date() ? 'upcoming' : 
@@ -260,7 +286,7 @@ const SellerPromotionsPage = () => {
                           </TableCell>
                           <TableCell>
                             {promo.type === 'discount' && `${promo.value}%`}
-                            {promo.type === 'fixed' && `Rp ${promo.value.toLocaleString('id-ID')}`}
+                            {promo.type === 'fixed' && `Rp ${promo.value?.toLocaleString('id-ID')}`}
                             {promo.type === 'bundle' && '-'}
                             {promo.type === 'flash_sale' && `${promo.value}%`}
                             {promo.type === 'shipping' && `Min. Rp ${promo.minPurchase?.toLocaleString('id-ID')}`}
@@ -347,7 +373,7 @@ const SellerPromotionsPage = () => {
                               </TableCell>
                               <TableCell>
                                 {promo.type === 'discount' && `${promo.value}%`}
-                                {promo.type === 'fixed' && `Rp ${promo.value.toLocaleString('id-ID')}`}
+                                {promo.type === 'fixed' && `Rp ${promo.value?.toLocaleString('id-ID')}`}
                                 {promo.type === 'bundle' && '-'}
                                 {promo.type === 'flash_sale' && `${promo.value}%`}
                                 {promo.type === 'shipping' && `Min. Rp ${promo.minPurchase?.toLocaleString('id-ID')}`}
@@ -438,7 +464,7 @@ const SellerPromotionsPage = () => {
               <label htmlFor="type" className="text-right text-sm font-medium">Tipe</label>
               <Select
                 value={formData.type}
-                onValueChange={(value) => handleSelectChange('type', value)}
+                onValueChange={(value) => handleSelectChange('type', value as BasePromotion['type'])}
               >
                 <SelectTrigger className="col-span-3">
                   <SelectValue placeholder="Pilih tipe promosi" />

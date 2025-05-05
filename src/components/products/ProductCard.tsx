@@ -43,7 +43,10 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
           <span className="text-sm text-gray-700 ml-1">{product.rating}</span>
           <span className="text-xs text-gray-500 ml-1">({product.reviews})</span>
-          <span className="text-xs text-gray-500 ml-auto">{product.seller}</span>
+          <Link to={`/seller/${product.seller === 'TechGadgets' ? 'seller1' : 'seller2'}`} 
+                className="text-xs text-primary hover:underline ml-auto">
+            {product.seller}
+          </Link>
         </div>
       </div>
     </div>

@@ -1,11 +1,12 @@
 
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
+import { ArrowLeft, User } from 'lucide-react';
 import ProductDetail from '@/components/products/ProductDetail';
 import ProductReviews from '@/components/products/ProductReviews';
 import { mockProducts, Product } from '@/lib/mockData';
 import { useCart } from '@/hooks/useCart';
+import { Button } from '@/components/ui/button';
 
 const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -13,6 +14,13 @@ const ProductDetailPage: React.FC = () => {
   const { addItem } = useCart();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Get seller ID based on seller name
+  const getSellerIdFromName = (sellerName: string) => {
+    if (sellerName === 'TechGadgets') return 'seller1';
+    if (sellerName === 'StyleHub') return 'seller2';
+    return 'unknown';
+  };
 
   useEffect(() => {
     // Simulate API fetch delay
@@ -65,6 +73,8 @@ const ProductDetailPage: React.FC = () => {
     );
   }
 
+  const sellerId = getSellerIdFromName(product.seller);
+
   return (
     <div className="app-container pb-16">
       <div className="sticky top-0 bg-white z-10 px-4 py-3 flex items-center shadow-sm">
@@ -83,6 +93,22 @@ const ProductDetailPage: React.FC = () => {
         product={product} 
         onAddToCart={() => addItem(product, 1)}
       />
+      
+      {/* Seller Section */}
+      <div className="p-4 border-t border-b">
+        <Link to={`/seller/${sellerId}`} className="flex items-center">
+          <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+            <User size={20} className="text-gray-500" />
+          </div>
+          <div className="ml-3">
+            <h3 className="font-medium">{product.seller}</h3>
+            <p className="text-xs text-gray-500">View Shop</p>
+          </div>
+          <Button variant="outline" size="sm" className="ml-auto">
+            Visit Store
+          </Button>
+        </Link>
+      </div>
       
       {/* Product Reviews */}
       <div className="p-4">

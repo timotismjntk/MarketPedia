@@ -16,6 +16,7 @@ import ProtectedRoute from "./components/auth/ProtectedRoute";
 import Index from "./pages/Index";
 import ProductsPage from "./pages/ProductsPage";
 import ProductDetailPage from "./pages/ProductDetailPage";
+import SellerProfilePage from "./pages/SellerProfilePage";
 import CartPage from "./pages/CartPage";
 import AuthPage from "./pages/AuthPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -70,6 +71,7 @@ const App = () => (
                 <Route index element={<Index />} />
                 <Route path="products" element={<ProductsPage />} />
                 <Route path="product/:id" element={<ProductDetailPage />} />
+                <Route path="seller/:id" element={<SellerProfilePage />} />
                 <Route path="cart" element={<CartPage />} />
                 <Route path="wishlist" element={<WishlistPage />} />
                 <Route path="profile" element={<ProfilePage />} />

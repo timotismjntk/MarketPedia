@@ -3,8 +3,29 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Send, MessageSquare } from 'lucide-react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 
+// Define interfaces for our data
+interface ChatItem {
+  id: string;
+  name: string;
+  image: string;
+  lastMessage: string;
+  time: string;
+  unread: number;
+  isProductChat: boolean;
+  productId?: string;
+  productName?: string;
+  sellerId?: string;
+}
+
+interface MessageItem {
+  id: string;
+  sender: 'user' | 'other';
+  text: string;
+  time: string;
+}
+
 // Mock chat data
-const mockChats = [
+const mockChats: ChatItem[] = [
   {
     id: 'chat1',
     name: 'TechGadgets',
@@ -14,7 +35,8 @@ const mockChats = [
     unread: 2,
     isProductChat: true,
     productId: '1',
-    productName: 'Modern Wireless Earbuds'
+    productName: 'Modern Wireless Earbuds',
+    sellerId: 'seller1'
   },
   {
     id: 'chat2',
@@ -25,7 +47,8 @@ const mockChats = [
     unread: 0,
     isProductChat: true,
     productId: '3',
-    productName: 'Classic Cotton T-Shirt'
+    productName: 'Classic Cotton T-Shirt',
+    sellerId: 'seller2'
   },
   {
     id: 'chat3',
@@ -39,7 +62,7 @@ const mockChats = [
 ];
 
 // Mock messages for a specific chat
-const mockMessages = [
+const mockMessages: MessageItem[] = [
   {
     id: 'msg1',
     sender: 'user',
@@ -170,7 +193,7 @@ const ChatPage: React.FC = () => {
     unread: 0,
     isProductChat: true,
     productId: id
-  };
+  } as ChatItem;
   
   const handleSend = () => {
     if (message.trim()) {

@@ -1,147 +1,142 @@
+
+// Mock data for products, categories, etc.
+
 export interface Product {
   id: string;
   name: string;
+  description: string;
   price: number;
   image: string;
-  description: string;
   category: string;
-  seller: string;
   rating: number;
   reviews: number;
   inStock: boolean;
+  seller: string;
   status?: 'active' | 'pending' | 'rejected';
 }
 
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  role: 'buyer' | 'seller' | 'admin';
-  avatar?: string;
-}
-
 export const categories = [
-  'All',
   'Electronics',
+  'Home & Kitchen',
   'Fashion',
-  'Home',
   'Beauty',
   'Sports',
   'Books',
-  'Toys'
+  'Toys',
+  'Furniture'
 ];
 
 export const mockProducts: Product[] = [
   {
-    id: '1',
+    id: 'p1',
     name: 'Modern Wireless Earbuds',
-    price: 59.99,
-    image: '/placeholder.svg',
-    description: 'High-quality wireless earbuds with noise cancellation and long battery life. Perfect for music lovers and professionals on the go.',
-    category: 'Electronics',
-    seller: 'TechGadgets',
-    rating: 4.8,
-    reviews: 243,
-    inStock: true,
-    status: 'active'
-  },
-  {
-    id: '2',
-    name: 'Premium Cotton T-Shirt',
-    price: 19.99,
-    image: '/placeholder.svg',
-    description: 'Comfortable cotton t-shirt with modern fit. Available in multiple colors and sizes.',
-    category: 'Fashion',
-    seller: 'StyleHub',
-    rating: 4.5,
-    reviews: 189,
-    inStock: true,
-    status: 'active'
-  },
-  {
-    id: '3',
-    name: 'Smart Home Speaker',
-    price: 129.99,
-    image: '/placeholder.svg',
-    description: 'Voice-controlled smart speaker with premium sound quality and virtual assistant.',
-    category: 'Electronics',
-    seller: 'SmartHome',
-    rating: 4.7,
-    reviews: 312,
-    inStock: true,
-    status: 'active'
-  },
-  {
-    id: '4',
-    name: 'Organic Face Cream',
-    price: 24.99,
-    image: '/placeholder.svg',
-    description: 'Natural face cream with organic ingredients. Hydrates and rejuvenates your skin.',
-    category: 'Beauty',
-    seller: 'NaturalBeauty',
-    rating: 4.6,
-    reviews: 157,
-    inStock: true,
-    status: 'active'
-  },
-  {
-    id: '5',
-    name: 'Fitness Tracker Watch',
+    description: 'Experience crystal-clear sound with our latest wireless earbuds. Features active noise cancellation and 30-hour battery life.',
     price: 79.99,
-    image: '/placeholder.svg',
-    description: 'Advanced fitness tracker with heart rate monitoring, sleep tracking, and workout modes.',
-    category: 'Sports',
-    seller: 'FitGear',
-    rating: 4.4,
-    reviews: 276,
-    inStock: false,
-    status: 'active'
-  },
-  {
-    id: '6',
-    name: 'Ergonomic Office Chair',
-    price: 199.99,
-    image: '/placeholder.svg',
-    description: 'Comfortable ergonomic chair for home office with adjustable height and lumbar support.',
-    category: 'Home',
-    seller: 'HomeOffice',
-    rating: 4.9,
-    reviews: 124,
-    inStock: true,
-    status: 'active'
-  },
-  {
-    id: '7',
-    name: 'Bestselling Novel',
-    price: 14.99,
-    image: '/placeholder.svg',
-    description: 'Award-winning novel that has topped charts worldwide. Available in hardcover and paperback.',
-    category: 'Books',
-    seller: 'BookWorld',
-    rating: 4.7,
-    reviews: 531,
-    inStock: true,
-    status: 'active'
-  },
-  {
-    id: '8',
-    name: 'Kids Educational Toy Set',
-    price: 34.99,
-    image: '/placeholder.svg',
-    description: 'STEM learning toy set for children ages 5-10. Develops critical thinking and creativity.',
-    category: 'Toys',
-    seller: 'EduToys',
+    image: 'https://picsum.photos/id/1/800/600',
+    category: 'Electronics',
     rating: 4.5,
-    reviews: 98,
+    reviews: 128,
     inStock: true,
+    seller: 'TechGadgets',
+    status: 'active'
+  },
+  {
+    id: 'p2',
+    name: 'Smart Home Assistant',
+    description: 'Control your home with voice commands. Compatible with most smart home devices and services.',
+    price: 129.99,
+    image: 'https://picsum.photos/id/11/800/600',
+    category: 'Electronics',
+    rating: 4.2,
+    reviews: 85,
+    inStock: true,
+    seller: 'TechGadgets',
+    status: 'active'
+  },
+  {
+    id: 'p3',
+    name: 'Ergonomic Office Chair',
+    description: 'Work in comfort with this adjustable ergonomic chair. Features lumbar support and breathable mesh back.',
+    price: 199.99,
+    image: 'https://picsum.photos/id/21/800/600',
+    category: 'Furniture',
+    rating: 4.7,
+    reviews: 42,
+    inStock: false,
+    seller: 'HomeOffice',
+    status: 'active'
+  },
+  {
+    id: 'p4',
+    name: 'Stainless Steel Water Bottle',
+    description: 'Stay hydrated with this insulated water bottle. Keeps drinks cold for 24 hours or hot for 12 hours.',
+    price: 24.99,
+    image: 'https://picsum.photos/id/31/800/600',
+    category: 'Sports',
+    rating: 4.8,
+    reviews: 156,
+    inStock: true,
+    seller: 'StyleHub',
+    status: 'active'
+  },
+  {
+    id: 'p5',
+    name: 'Organic Cotton T-Shirt',
+    description: 'Comfortable, sustainable, and stylish. Made from 100% organic cotton with eco-friendly dyes.',
+    price: 29.99,
+    image: 'https://picsum.photos/id/41/800/600',
+    category: 'Fashion',
+    rating: 4.3,
+    reviews: 67,
+    inStock: true,
+    seller: 'StyleHub',
+    status: 'active'
+  },
+  {
+    id: 'p6',
+    name: 'Smart Fitness Tracker',
+    description: 'Track your workouts, heart rate, and sleep patterns. Water-resistant and long battery life.',
+    price: 89.99,
+    image: 'https://picsum.photos/id/51/800/600',
+    category: 'Electronics',
+    rating: 4.4,
+    reviews: 94,
+    inStock: true,
+    seller: 'TechGadgets',
+    status: 'active'
+  },
+  {
+    id: 'p7',
+    name: 'Non-Stick Cooking Set',
+    description: 'Complete set of non-stick pots and pans. Dishwasher safe and PFOA-free.',
+    price: 149.99,
+    image: 'https://picsum.photos/id/61/800/600',
+    category: 'Home & Kitchen',
+    rating: 4.6,
+    reviews: 38,
+    inStock: true,
+    seller: 'HomeOffice',
+    status: 'active'
+  },
+  {
+    id: 'p8',
+    name: 'Bluetooth Speaker',
+    description: 'Portable speaker with rich sound and deep bass. Waterproof and 12 hours of playtime.',
+    price: 59.99,
+    image: 'https://picsum.photos/id/71/800/600',
+    category: 'Electronics',
+    rating: 4.1,
+    reviews: 112,
+    inStock: true,
+    seller: 'TechGadgets',
     status: 'active'
   }
 ];
 
-export const currentUser: User = {
-  id: 'user1',
-  name: 'John Doe',
-  email: 'john@example.com',
-  role: 'buyer',
-  avatar: '/placeholder.svg'
-};
+// Sample order statuses for profile page
+export const orderStatuses = [
+  { key: 'to-pay', label: 'Unpaid', count: 2, route: '/orders/unpaid' },
+  { key: 'to-ship', label: 'Packed', count: 3, route: '/orders/packed' },
+  { key: 'to-receive', label: 'Shipped', count: 1, route: '/orders/shipped' },
+  { key: 'to-review', label: 'Rate', count: 4, route: '/orders/rate' }
+];

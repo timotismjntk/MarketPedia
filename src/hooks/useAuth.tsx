@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export type UserRole = 'buyer' | 'seller' | 'admin';
 
@@ -17,7 +17,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string, role?: UserRole) => Promise<void>;
   register: (name: string, email: string, password: string, role?: UserRole) => Promise<void>;
   logout: () => void;
   verifyOTP: (otp: string) => Promise<boolean>;
@@ -52,7 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     checkAuth();
   }, []);
   
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, role: UserRole = 'buyer') => {
     setIsLoading(true);
     
     try {
@@ -61,10 +61,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const mockUser: User = {
-        id: '1',
+        id: role === 'seller' ? 'seller1' : role === 'admin' ? 'admin1' : 'user1',
         name: 'John Doe',
         email,
-        role: 'buyer', // Default role
+        role, // Use the provided role
         avatar: '/placeholder.svg'
       };
       
@@ -97,7 +97,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       const mockUser: User = {
-        id: Date.now().toString(),
+        id: role === 'seller' ? `seller${Date.now()}` : role === 'admin' ? `admin${Date.now()}` : `user${Date.now()}`,
         name,
         email,
         role,

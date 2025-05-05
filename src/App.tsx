@@ -1,163 +1,165 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import BottomNavigation from "./components/layout/BottomNavigation";
-import { CartProvider } from "./hooks/useCart";
-import { AuthProvider } from "./hooks/useAuth";
-import { ProductsProvider } from "./hooks/useProducts";
-import { NotificationsProvider } from "./hooks/useNotifications";
-import MainLayout from "./components/layout/MainLayout";
-import SellerLayout from "./components/layout/SellerLayout";
-import AdminLayout from "./components/layout/AdminLayout";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider } from '@/components/ui/theme-provider';
+
+// Main Layout
+import MainLayout from '@/components/layout/MainLayout';
+import SellerLayout from '@/components/layout/SellerLayout';
+import AdminLayout from '@/components/layout/AdminLayout';
+
+// Auth Provider and Protected Routes
+import { AuthProvider } from '@/hooks/useAuth';
+import { NotificationsProvider } from '@/hooks/useNotifications';
+import { CartProvider } from '@/hooks/useCart';
+import { ProductsProvider } from '@/hooks/useProducts';
+import ProtectedRoute from '@/components/auth/ProtectedRoute';
 
 // Pages
-import Index from "./pages/Index";
-import ProductsPage from "./pages/ProductsPage";
-import ProductDetailPage from "./pages/ProductDetailPage";
-import SellerProfilePage from "./pages/SellerProfilePage";
-import CartPage from "./pages/CartPage";
-import AuthPage from "./pages/AuthPage";
-import ProfilePage from "./pages/ProfilePage";
-import ProfileEditPage from "./pages/ProfileEditPage";
-import WishlistPage from "./pages/WishlistPage";
-import CheckoutPage from "./pages/CheckoutPage";
-import PaymentPage from "./pages/PaymentPage";
-import OrdersPage from "./pages/OrdersPage";
-import OrderTrackingPage from "./pages/OrderTrackingPage";
-import NotificationsPage from "./pages/NotificationsPage";
-import ChatPage from "./pages/ChatPage";
-import LoyaltyPage from "./pages/LoyaltyPage";
+import AuthPage from '@/pages/AuthPage';
+import Index from '@/pages/Index';
+import ProductsPage from '@/pages/ProductsPage';
+import ProductDetailPage from '@/pages/ProductDetailPage';
+import CartPage from '@/pages/CartPage';
+import ProfilePage from '@/pages/ProfilePage';
+import NotFound from '@/pages/NotFound';
+import AccountSettingsPage from '@/pages/AccountSettingsPage';
+import CheckoutPage from '@/pages/CheckoutPage';
+import PaymentPage from '@/pages/PaymentPage';
+import OrderTrackingPage from '@/pages/OrderTrackingPage';
+import OrdersPage from '@/pages/OrdersPage';
+import ChatPage from '@/pages/ChatPage';
+import WishlistPage from '@/pages/WishlistPage';
+import ProfileEditPage from '@/pages/ProfileEditPage';
+import SellerProfilePage from '@/pages/SellerProfilePage';
+import LoyaltyPage from '@/pages/LoyaltyPage';
+import NotificationsPage from '@/pages/NotificationsPage';
 
-// Seller Pages
-import SellerDashboardPage from "./pages/seller/DashboardPage";
-import SellerProductsPage from "./pages/seller/ProductsPage";
-import SellerOrdersPage from "./pages/seller/OrdersPage";
-import SellerPromotionsPage from "./pages/seller/PromotionsPage";
-import SellerChatPage from "./pages/seller/ChatPage";
-import SellerLiveStreamPage from "./pages/seller/LiveStreamPage";
-import SellerUploadPage from "./pages/seller/UploadPage";
-import SellerReviewsPage from "./pages/seller/ReviewsPage";
-import SellerProfileEditPage from "./pages/seller/ProfileEditPage";
-import SellerNotificationsPage from "./pages/seller/NotificationsPage";
+// Order status pages
+import UnpaidOrdersPage from '@/pages/orders/UnpaidOrdersPage';
+import PackedOrdersPage from '@/pages/orders/PackedOrdersPage';
+import ShippedOrdersPage from '@/pages/orders/ShippedOrdersPage';
+import RateOrdersPage from '@/pages/orders/RateOrdersPage';
 
-// Admin Pages
-import AdminDashboardPage from "./pages/admin/DashboardPage";
-import AdminUsersPage from "./pages/admin/UsersPage";
-import AdminCategoriesPage from "./pages/admin/CategoriesPage";
-import AdminPromotionsPage from "./pages/admin/PromotionsPage";
-import AdminReportsPage from "./pages/admin/ReportsPage";
-import AdminComplaintsPage from "./pages/admin/ComplaintsPage";
-import AdminModerationPage from "./pages/admin/ModerationPage";
-import AdminNotificationsPage from "./pages/admin/NotificationsPage";
-import AdminCommissionPage from "./pages/admin/CommissionPage";
+// Seller pages
+import SellerDashboard from '@/pages/seller/DashboardPage';
+import SellerProducts from '@/pages/seller/ProductsPage';
+import SellerOrders from '@/pages/seller/OrdersPage';
+import SellerReviews from '@/pages/seller/ReviewsPage';
+import SellerChat from '@/pages/seller/ChatPage';
+import SellerLive from '@/pages/seller/LiveStreamPage';
+import SellerUpload from '@/pages/seller/UploadPage';
+import SellerPromotions from '@/pages/seller/PromotionsPage';
+import SellerProfileEdit from '@/pages/seller/ProfileEditPage';
+import SellerNotifications from '@/pages/seller/NotificationsPage';
 
-// Order Status Pages
-import UnpaidOrdersPage from "./pages/orders/UnpaidOrdersPage";
-import PackedOrdersPage from "./pages/orders/PackedOrdersPage";
-import ShippedOrdersPage from "./pages/orders/ShippedOrdersPage";
-import RateOrdersPage from "./pages/orders/RateOrdersPage";
+// Admin pages
+import AdminDashboard from '@/pages/admin/DashboardPage';
+import AdminUsers from '@/pages/admin/UsersPage';
+import AdminCategories from '@/pages/admin/CategoriesPage';
+import AdminReports from '@/pages/admin/ReportsPage';
+import AdminModeration from '@/pages/admin/ModerationPage';
+import AdminComplaints from '@/pages/admin/ComplaintsPage';
+import AdminPromotions from '@/pages/admin/PromotionsPage';
+import AdminCommission from '@/pages/admin/CommissionPage';
+import AdminNotifications from '@/pages/admin/NotificationsPage';
 
-// Account Settings Page
-import AccountSettingsPage from "./pages/AccountSettingsPage";
+// Styles
+import './App.css';
 
-import NotFound from "./pages/NotFound";
+// Toast component
+import { Toaster } from "@/components/ui/toaster";
 
-const queryClient = new QueryClient();
-
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+function App() {
+  return (
+    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <AuthProvider>
         <NotificationsProvider>
           <ProductsProvider>
             <CartProvider>
-              <Toaster />
-              <Sonner />
-              <BrowserRouter>
+              <Router>
                 <Routes>
-                  {/* Public Routes */}
+                  {/* Auth Routes */}
                   <Route path="/auth" element={<AuthPage />} />
-                  
-                  {/* Main App Routes */}
-                  <Route path="/" element={<MainLayout />}>
-                    <Route index element={<Index />} />
-                    <Route path="products" element={<ProductsPage />} />
-                    <Route path="product/:id" element={<ProductDetailPage />} />
-                    <Route path="seller/:id" element={<SellerProfilePage />} />
-                    <Route path="cart" element={<CartPage />} />
-                    <Route path="wishlist" element={<WishlistPage />} />
-                    <Route path="profile" element={<ProfilePage />} />
-                    <Route path="profile/edit" element={<ProfileEditPage />} />
-                    <Route path="checkout" element={<CheckoutPage />} />
-                    <Route path="payment" element={<PaymentPage />} />
-                    <Route path="orders" element={<OrdersPage />} />
-                    <Route path="orders/unpaid" element={<UnpaidOrdersPage />} />
-                    <Route path="orders/packed" element={<PackedOrdersPage />} />
-                    <Route path="orders/shipped" element={<ShippedOrdersPage />} />
-                    <Route path="orders/rate" element={<RateOrdersPage />} />
-                    <Route path="order/:id" element={<OrderTrackingPage />} />
-                    <Route path="notifications" element={<NotificationsPage />} />
-                    <Route path="settings/account" element={<AccountSettingsPage />} />
-                    <Route path="chat" element={<ChatPage />} />
-                    <Route path="chat/:id" element={<ChatPage />} />
-                    <Route path="loyalty" element={<LoyaltyPage />} />
+
+                  {/* Main Application Routes */}
+                  <Route element={<MainLayout />}>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/products" element={<ProductsPage />} />
+                    <Route path="/product/:id" element={<ProductDetailPage />} />
+                    <Route path="/seller/:id" element={<SellerProfilePage />} />
+                    <Route path="/cart" element={<CartPage />} />
+                    <Route path="/notifications" element={<NotificationsPage />} />
+                    <Route path="/chat" element={<ChatPage />} />
+                    
+                    {/* Protected Customer Routes */}
+                    <Route element={<ProtectedRoute allowedRoles={['buyer', 'admin']} />}>
+                      <Route path="/profile" element={<ProfilePage />} />
+                      <Route path="/profile/edit" element={<ProfileEditPage />} />
+                      <Route path="/settings" element={<AccountSettingsPage />} />
+                      <Route path="/checkout" element={<CheckoutPage />} />
+                      <Route path="/payment" element={<PaymentPage />} />
+                      <Route path="/orders" element={<OrdersPage />} />
+                      <Route path="/orders/unpaid" element={<UnpaidOrdersPage />} />
+                      <Route path="/orders/packed" element={<PackedOrdersPage />} />
+                      <Route path="/orders/shipped" element={<ShippedOrdersPage />} />
+                      <Route path="/orders/rate" element={<RateOrdersPage />} />
+                      <Route path="/order/:id" element={<OrderTrackingPage />} />
+                      <Route path="/wishlist" element={<WishlistPage />} />
+                      <Route path="/loyalty" element={<LoyaltyPage />} />
+                    </Route>
                   </Route>
-                  
+
                   {/* Seller Routes */}
                   <Route 
-                    path="/seller" 
                     element={
-                      // <ProtectedRoute requiredRole="seller">
+                      <ProtectedRoute allowedRoles={['seller', 'admin']}>
                         <SellerLayout />
-                      // </ProtectedRoute>
+                      </ProtectedRoute>
                     }
                   >
-                    <Route index element={<SellerDashboardPage />} />
-                    <Route path="profile/edit" element={<SellerProfileEditPage />} />
-                    <Route path="products" element={<SellerProductsPage />} />
-                    <Route path="orders" element={<SellerOrdersPage />} />
-                    <Route path="promotions" element={<SellerPromotionsPage />} />
-                    <Route path="reviews" element={<SellerReviewsPage />} />
-                    <Route path="chat" element={<SellerChatPage />} />
-                    <Route path="chat/:id" element={<SellerChatPage />} />
-                    <Route path="live" element={<SellerLiveStreamPage />} />
-                    <Route path="upload" element={<SellerUploadPage />} />
-                    <Route path="notifications" element={<SellerNotificationsPage />} />
+                    <Route path="/seller" element={<SellerDashboard />} />
+                    <Route path="/seller/products" element={<SellerProducts />} />
+                    <Route path="/seller/orders" element={<SellerOrders />} />
+                    <Route path="/seller/reviews" element={<SellerReviews />} />
+                    <Route path="/seller/chat" element={<SellerChat />} />
+                    <Route path="/seller/live" element={<SellerLive />} />
+                    <Route path="/seller/upload" element={<SellerUpload />} />
+                    <Route path="/seller/promotions" element={<SellerPromotions />} />
+                    <Route path="/seller/profile-edit" element={<SellerProfileEdit />} />
+                    <Route path="/seller/notifications" element={<SellerNotifications />} />
                   </Route>
-                  
+
                   {/* Admin Routes */}
                   <Route 
-                    path="/admin" 
                     element={
-                      // <ProtectedRoute requiredRole="admin">
+                      <ProtectedRoute allowedRoles={['admin']}>
                         <AdminLayout />
-                      // </ProtectedRoute>
+                      </ProtectedRoute>
                     }
                   >
-                    <Route index element={<AdminDashboardPage />} />
-                    <Route path="users" element={<AdminUsersPage />} />
-                    <Route path="categories" element={<AdminCategoriesPage />} />
-                    <Route path="promotions" element={<AdminPromotionsPage />} />
-                    <Route path="reports" element={<AdminReportsPage />} />
-                    <Route path="complaints" element={<AdminComplaintsPage />} />
-                    <Route path="moderation" element={<AdminModerationPage />} />
-                    <Route path="notifications" element={<AdminNotificationsPage />} />
-                    <Route path="settings/commission" element={<AdminCommissionPage />} />
+                    <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/admin/users" element={<AdminUsers />} />
+                    <Route path="/admin/categories" element={<AdminCategories />} />
+                    <Route path="/admin/reports" element={<AdminReports />} />
+                    <Route path="/admin/moderation" element={<AdminModeration />} />
+                    <Route path="/admin/complaints" element={<AdminComplaints />} />
+                    <Route path="/admin/promotions" element={<AdminPromotions />} />
+                    <Route path="/admin/commission" element={<AdminCommission />} />
+                    <Route path="/admin/notifications" element={<AdminNotifications />} />
                   </Route>
-                  
-                  {/* 404 */}
+
+                  {/* 404 Route */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
-              </BrowserRouter>
+                <Toaster />
+              </Router>
             </CartProvider>
           </ProductsProvider>
         </NotificationsProvider>
       </AuthProvider>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </ThemeProvider>
+  );
+}
 
 export default App;

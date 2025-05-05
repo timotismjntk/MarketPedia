@@ -1,16 +1,38 @@
 
-import React, { useState } from 'react';
-import { ArrowLeft, CreditCard, Truck, MapPin } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, CreditCard, Truck, MapPin, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/hooks/useCart';
 import { Button } from '@/components/ui/button';
+import { 
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription
+} from '@/components/ui/dialog';
 
 type ShippingMethod = 'standard' | 'express' | 'same-day';
+
+// Address interface
+interface Address {
+  id: string;
+  name: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  isDefault: boolean;
+}
 
 const CheckoutPage: React.FC = () => {
   const navigate = useNavigate();
   const { items, subtotal } = useCart();
   const [shippingMethod, setShippingMethod] = useState<ShippingMethod>('standard');
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
+  const [showAddressDialog, setShowAddressDialog] = useState(false);
   
   const shippingCosts = {
     standard: 5,
@@ -21,8 +43,33 @@ const CheckoutPage: React.FC = () => {
   const shippingCost = shippingCosts[shippingMethod];
   const total = subtotal + shippingCost;
   
+  useEffect(() => {
+    // Load saved addresses from localStorage
+    const savedAddresses = localStorage.getItem('userAddresses');
+    if (savedAddresses) {
+      const parsedAddresses = JSON.parse(savedAddresses);
+      setAddresses(parsedAddresses);
+      
+      // Select default address
+      const defaultAddress = parsedAddresses.find((a: Address) => a.isDefault);
+      setSelectedAddress(defaultAddress || parsedAddresses[0]);
+    }
+  }, []);
+  
   const handleProceedToPayment = () => {
+    // Save selected address and shipping method to localStorage for the payment page
+    localStorage.setItem('checkoutDetails', JSON.stringify({
+      address: selectedAddress,
+      shippingMethod,
+      shippingCost,
+      total
+    }));
     navigate('/payment');
+  };
+  
+  const handleSelectAddress = (address: Address) => {
+    setSelectedAddress(address);
+    setShowAddressDialog(false);
   };
   
   return (
@@ -45,15 +92,35 @@ const CheckoutPage: React.FC = () => {
               <MapPin className="text-primary mr-2" size={20} />
               <h2 className="font-medium">Delivery Address</h2>
             </div>
-            <button className="text-sm text-primary">Change</button>
+            <button 
+              className="text-sm text-primary"
+              onClick={() => setShowAddressDialog(true)}
+            >
+              Change
+            </button>
           </div>
           
-          <div className="text-sm">
-            <p className="font-medium">John Doe</p>
-            <p className="text-gray-600">+1 123-456-7890</p>
-            <p className="text-gray-600">123 Main Street, Apt 4B</p>
-            <p className="text-gray-600">New York, NY 10001</p>
-          </div>
+          {selectedAddress ? (
+            <div className="text-sm">
+              <p className="font-medium">{selectedAddress.name}</p>
+              <p className="text-gray-600">{selectedAddress.phone}</p>
+              <p className="text-gray-600">{selectedAddress.street}</p>
+              <p className="text-gray-600">
+                {selectedAddress.city}, {selectedAddress.state} {selectedAddress.zipCode}
+              </p>
+            </div>
+          ) : (
+            <div className="flex justify-between items-center py-2">
+              <p className="text-sm text-gray-500">No delivery address selected</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/profile/edit')}
+              >
+                Add Address
+              </Button>
+            </div>
+          )}
         </div>
         
         {/* Order Summary */}
@@ -169,11 +236,68 @@ const CheckoutPage: React.FC = () => {
         <Button 
           className="w-full"
           onClick={handleProceedToPayment}
+          disabled={!selectedAddress}
         >
           <CreditCard className="mr-2" size={18} />
           Proceed to Payment (${total.toFixed(2)})
         </Button>
       </div>
+      
+      {/* Address Selection Dialog */}
+      <Dialog open={showAddressDialog} onOpenChange={setShowAddressDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Select Delivery Address</DialogTitle>
+            <DialogDescription>
+              Choose from your saved addresses or add a new one.
+            </DialogDescription>
+          </DialogHeader>
+          
+          {addresses.length > 0 ? (
+            <div className="space-y-2 mt-2 max-h-[60vh] overflow-auto">
+              {addresses.map((address) => (
+                <div 
+                  key={address.id}
+                  className={`p-3 border rounded-lg cursor-pointer ${
+                    selectedAddress?.id === address.id ? 'border-primary bg-primary/5' : ''
+                  }`}
+                  onClick={() => handleSelectAddress(address)}
+                >
+                  <div className="flex justify-between">
+                    <span className="font-medium">{address.name}</span>
+                    {address.isDefault && (
+                      <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                        Default
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-sm text-gray-600">{address.phone}</p>
+                  <p className="text-sm text-gray-600">{address.street}</p>
+                  <p className="text-sm text-gray-600">
+                    {address.city}, {address.state} {address.zipCode}
+                  </p>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8">
+              <MapPin className="mx-auto h-12 w-12 text-gray-400" />
+              <h3 className="mt-2 text-lg font-medium text-gray-900">No addresses found</h3>
+              <p className="mt-1 text-sm text-gray-500">Add a delivery address to continue.</p>
+              <div className="mt-6">
+                <Button 
+                  onClick={() => {
+                    setShowAddressDialog(false);
+                    navigate('/profile/edit');
+                  }}
+                >
+                  Add New Address
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

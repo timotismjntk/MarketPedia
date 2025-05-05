@@ -1,37 +1,91 @@
 
-import React, { useState } from 'react';
-import { ArrowLeft, CreditCard, Smartphone, Wallet, DollarSign } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, CreditCard, Smartphone, Wallet, DollarSign, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/hooks/useCart';
 import { Button } from '@/components/ui/button';
-import { useToast } from '@/components/ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 type PaymentMethod = 'credit-card' | 'e-wallet' | 'bank-transfer' | 'cod';
+type EWallet = 'OVO' | 'DANA' | 'GoPay' | '';
+
+interface PaymentDetails {
+  address: any;  // Using any for brevity, could be properly typed
+  shippingMethod: string;
+  shippingCost: number;
+  total: number;
+}
 
 const PaymentPage: React.FC = () => {
   const navigate = useNavigate();
   const { items, subtotal, clearCart } = useCart();
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('credit-card');
+  const [selectedWallet, setSelectedWallet] = useState<EWallet>('');
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
+  const [checkoutDetails, setCheckoutDetails] = useState<PaymentDetails | null>(null);
   
-  // Assume shipping cost from previous page
-  const shippingCost = 5;
+  // Load checkout details from localStorage
+  useEffect(() => {
+    const savedDetails = localStorage.getItem('checkoutDetails');
+    if (savedDetails) {
+      setCheckoutDetails(JSON.parse(savedDetails));
+    }
+  }, []);
+  
+  // If no checkout details, use default shipping cost
+  const shippingCost = checkoutDetails?.shippingCost || 5;
   const total = subtotal + shippingCost;
   
   const handlePayment = () => {
+    // Validate e-wallet selection
+    if (paymentMethod === 'e-wallet' && !selectedWallet) {
+      toast({
+        title: "Please select an e-wallet",
+        description: "You need to select an e-wallet to continue.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setLoading(true);
     
     // Simulate payment processing
     setTimeout(() => {
       setLoading(false);
       clearCart();
+      
+      // Create a mock order in localStorage
+      const orderId = 'ORD-' + Date.now();
+      const existingOrders = JSON.parse(localStorage.getItem('orders') || '[]');
+      const newOrder = {
+        id: orderId,
+        items,
+        total,
+        shippingCost,
+        status: 'processing',
+        paymentMethod,
+        paymentDetails: paymentMethod === 'e-wallet' ? selectedWallet : null,
+        date: new Date().toISOString(),
+        address: checkoutDetails?.address || null,
+        shippingMethod: checkoutDetails?.shippingMethod || 'standard',
+      };
+      
+      // Add to orders array and save back to localStorage
+      existingOrders.push(newOrder);
+      localStorage.setItem('orders', JSON.stringify(existingOrders));
+      
       toast({
         title: 'Payment Successful',
         description: 'Your order has been placed successfully!',
       });
+      
       navigate('/orders');
     }, 2000);
+  };
+  
+  const handleWalletSelect = (wallet: EWallet) => {
+    setSelectedWallet(wallet);
   };
   
   return (
@@ -166,21 +220,69 @@ const PaymentPage: React.FC = () => {
             <h2 className="font-medium mb-4">Select E-Wallet</h2>
             
             <div className="grid grid-cols-3 gap-3">
-              <button className="p-3 border rounded-lg flex flex-col items-center justify-center">
-                <div className="w-10 h-10 bg-gray-200 rounded-full mb-2"></div>
+              <button 
+                className={`p-3 border rounded-lg flex flex-col items-center justify-center relative ${
+                  selectedWallet === 'OVO' ? 'border-primary bg-primary/5' : ''
+                }`}
+                onClick={() => handleWalletSelect('OVO')}
+              >
+                <div className="w-10 h-10 bg-purple-500 rounded-full mb-2 flex items-center justify-center text-white font-bold">
+                  OVO
+                </div>
                 <span className="text-sm">OVO</span>
+                {selectedWallet === 'OVO' && (
+                  <div className="absolute top-1 right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                )}
               </button>
               
-              <button className="p-3 border rounded-lg flex flex-col items-center justify-center">
-                <div className="w-10 h-10 bg-gray-200 rounded-full mb-2"></div>
+              <button 
+                className={`p-3 border rounded-lg flex flex-col items-center justify-center relative ${
+                  selectedWallet === 'DANA' ? 'border-primary bg-primary/5' : ''
+                }`}
+                onClick={() => handleWalletSelect('DANA')}
+              >
+                <div className="w-10 h-10 bg-blue-500 rounded-full mb-2 flex items-center justify-center text-white font-bold">
+                  DANA
+                </div>
                 <span className="text-sm">DANA</span>
+                {selectedWallet === 'DANA' && (
+                  <div className="absolute top-1 right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                )}
               </button>
               
-              <button className="p-3 border rounded-lg flex flex-col items-center justify-center">
-                <div className="w-10 h-10 bg-gray-200 rounded-full mb-2"></div>
+              <button 
+                className={`p-3 border rounded-lg flex flex-col items-center justify-center relative ${
+                  selectedWallet === 'GoPay' ? 'border-primary bg-primary/5' : ''
+                }`}
+                onClick={() => handleWalletSelect('GoPay')}
+              >
+                <div className="w-10 h-10 bg-green-500 rounded-full mb-2 flex items-center justify-center text-white font-bold">
+                  GP
+                </div>
                 <span className="text-sm">GoPay</span>
+                {selectedWallet === 'GoPay' && (
+                  <div className="absolute top-1 right-1 w-5 h-5 bg-primary rounded-full flex items-center justify-center">
+                    <Check className="w-3 h-3 text-white" />
+                  </div>
+                )}
               </button>
             </div>
+            
+            {selectedWallet && (
+              <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+                <h3 className="text-sm font-medium mb-2">Payment Instructions</h3>
+                <ol className="text-xs text-gray-600 list-decimal list-inside space-y-1">
+                  <li>Open your {selectedWallet} app</li>
+                  <li>Scan the QR code that will appear after clicking "Pay"</li>
+                  <li>Confirm payment in your app</li>
+                  <li>Wait for confirmation</li>
+                </ol>
+              </div>
+            )}
           </div>
         )}
         
@@ -210,7 +312,7 @@ const PaymentPage: React.FC = () => {
         <Button 
           className="w-full"
           onClick={handlePayment}
-          disabled={loading}
+          disabled={loading || (paymentMethod === 'e-wallet' && !selectedWallet)}
         >
           {loading ? 'Processing...' : `Pay $${total.toFixed(2)}`}
         </Button>

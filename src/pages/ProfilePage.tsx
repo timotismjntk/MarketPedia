@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import { 
   User, Settings, LogOut, ShoppingBag, 
-  Heart, Star, Truck, MapPin, Gem, Bell, Edit
+  Heart, Star, Truck, MapPin, Gem, Bell, Edit,
+  Package, CheckCircle
 } from 'lucide-react';
 import { currentUser } from '@/lib/mockData';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';
+import { useNotifications } from '@/hooks/useNotifications';
 
 // Import address and payment types from localStorage
 interface Address {
@@ -30,11 +32,12 @@ interface PaymentMethod {
 }
 
 // Define order status type for filtering
-type OrderStatus = 'to-pay' | 'to-ship' | 'to-receive' | 'to-review' | 'all';
+type OrderStatus = 'unpaid' | 'packed' | 'shipped' | 'rate' | 'all';
 
 const ProfilePage: React.FC = () => {
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { unreadCount } = useNotifications();
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
   
@@ -53,8 +56,8 @@ const ProfilePage: React.FC = () => {
   }, []);
   
   const handleNavigateToOrders = (status: OrderStatus) => {
-    // Navigate to orders page with the selected filter
-    navigate('/orders', { state: { orderStatus: status } });
+    // Navigate to specific order status page
+    navigate(`/orders/${status}`);
   };
   
   const handleLogout = () => {
@@ -126,39 +129,39 @@ const ProfilePage: React.FC = () => {
         <div className="grid grid-cols-4 gap-4 px-4 py-4 border-b border-gray-100">
           <div 
             className="flex flex-col items-center cursor-pointer"
-            onClick={() => handleNavigateToOrders('to-pay')}
+            onClick={() => handleNavigateToOrders('unpaid')}
           >
             <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mb-1">
               <ShoppingBag size={20} className="text-primary" />
             </div>
-            <span className="text-xs text-gray-600">To Pay</span>
+            <span className="text-xs text-gray-600">Unpaid</span>
           </div>
           <div 
             className="flex flex-col items-center cursor-pointer"
-            onClick={() => handleNavigateToOrders('to-ship')}
+            onClick={() => handleNavigateToOrders('packed')}
+          >
+            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mb-1">
+              <Package size={20} className="text-primary" />
+            </div>
+            <span className="text-xs text-gray-600">Packed</span>
+          </div>
+          <div 
+            className="flex flex-col items-center cursor-pointer"
+            onClick={() => handleNavigateToOrders('shipped')}
           >
             <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mb-1">
               <Truck size={20} className="text-primary" />
             </div>
-            <span className="text-xs text-gray-600">To Ship</span>
+            <span className="text-xs text-gray-600">Shipped</span>
           </div>
           <div 
             className="flex flex-col items-center cursor-pointer"
-            onClick={() => handleNavigateToOrders('to-receive')}
-          >
-            <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mb-1">
-              <MapPin size={20} className="text-primary" />
-            </div>
-            <span className="text-xs text-gray-600">To Receive</span>
-          </div>
-          <div 
-            className="flex flex-col items-center cursor-pointer"
-            onClick={() => handleNavigateToOrders('to-review')}
+            onClick={() => handleNavigateToOrders('rate')}
           >
             <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center mb-1">
               <Star size={20} className="text-primary" />
             </div>
-            <span className="text-xs text-gray-600">To Review</span>
+            <span className="text-xs text-gray-600">Rate</span>
           </div>
         </div>
       </div>
@@ -175,16 +178,25 @@ const ProfilePage: React.FC = () => {
           </Link>
           
           <Link to={`/notifications`}>
-            <button className="w-full flex items-center px-4 py-3 hover:bg-gray-50">
-              <Bell size={20} className="text-gray-500 mr-3" />
-              <span className="text-gray-700">Notifications</span>
+            <button className="w-full flex items-center px-4 py-3 hover:bg-gray-50 justify-between">
+              <div className="flex items-center">
+                <Bell size={20} className="text-gray-500 mr-3" />
+                <span className="text-gray-700">Notifications</span>
+              </div>
+              {unreadCount > 0 && (
+                <div className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </div>
+              )}
             </button>
           </Link>
           
-          <button className="w-full flex items-center px-4 py-3 hover:bg-gray-50">
-            <Settings size={20} className="text-gray-500 mr-3" />
-            <span className="text-gray-700">Account Settings</span>
-          </button>
+          <Link to={`/settings/account`}>
+            <button className="w-full flex items-center px-4 py-3 hover:bg-gray-50">
+              <Settings size={20} className="text-gray-500 mr-3" />
+              <span className="text-gray-700">Account Settings</span>
+            </button>
+          </Link>
           
           <button 
             className="w-full flex items-center px-4 py-3 text-red-500 hover:bg-gray-50"

@@ -1,7 +1,7 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Product } from '@/lib/mockData';
+import { Product, mockProducts } from '@/lib/mockData';
 import { useToast } from '@/hooks/use-toast';
+import { useNotifications } from '@/hooks/useNotifications';
 
 // Define types for products context
 type ProductStatus = 'active' | 'pending' | 'rejected';
@@ -32,6 +32,9 @@ const ProductsContext = createContext<ProductsContextType | undefined>(undefined
 
 export const ProductsProvider: React.FC<{children: React.ReactNode}> = ({ children }) => {
   const { toast } = useToast();
+  const { addNotification } = useNotifications();
+  
+  // Initialize with mock data and any saved products
   const [products, setProducts] = useState<ProductWithStatus[]>(() => {
     // Attempt to load products from localStorage
     const savedProducts = localStorage.getItem('appProducts');
@@ -41,12 +44,27 @@ export const ProductsProvider: React.FC<{children: React.ReactNode}> = ({ childr
         return JSON.parse(savedProducts);
       } catch (e) {
         console.error('Failed to parse saved products', e);
-        return [];
+        // If there's an error, initialize with mock products
+        return mockProducts.map(product => ({
+          ...product,
+          status: product.status || 'active',
+          sellerId: product.seller === 'TechGadgets' ? 'seller1' : 
+                   product.seller === 'StyleHub' ? 'seller2' : 'unknown',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        }));
       }
+    } else {
+      // Initialize with mock products
+      return mockProducts.map(product => ({
+        ...product,
+        status: product.status || 'active',
+        sellerId: product.seller === 'TechGadgets' ? 'seller1' : 
+                 product.seller === 'StyleHub' ? 'seller2' : 'unknown',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }));
     }
-    
-    // Return empty array if no saved products
-    return [];
   });
   
   // Save products to localStorage whenever it changes
@@ -71,17 +89,13 @@ export const ProductsProvider: React.FC<{children: React.ReactNode}> = ({ childr
       description: "Your product has been submitted for review.",
     });
     
-    // Notify admin about new product (in a real app this would send a notification)
-    const adminNotifications = JSON.parse(localStorage.getItem('adminNotifications') || '[]');
-    adminNotifications.push({
-      id: `notif-${Date.now()}`,
+    // Notify admin about new product
+    addNotification({
       type: 'product-submitted',
       title: 'New Product Submitted',
       message: `${product.name} has been submitted for review by ${product.seller}.`,
-      createdAt: now,
-      read: false
+      metadata: { productId: newProduct.id }
     });
-    localStorage.setItem('adminNotifications', JSON.stringify(adminNotifications));
   };
   
   const updateProduct = (id: string, updates: Partial<ProductWithStatus>) => {
@@ -120,16 +134,12 @@ export const ProductsProvider: React.FC<{children: React.ReactNode}> = ({ childr
     updateProduct(id, { status: 'active' });
     
     // Notify seller about approved product
-    const sellerNotifications = JSON.parse(localStorage.getItem(`${productToApprove.sellerId}-notifications`) || '[]');
-    sellerNotifications.push({
-      id: `notif-${Date.now()}`,
+    addNotification({
       type: 'product-approved',
       title: 'Product Approved',
       message: `Your product "${productToApprove.name}" has been approved and is now active.`,
-      createdAt: new Date().toISOString(),
-      read: false
+      metadata: { productId: id, sellerId: productToApprove.sellerId }
     });
-    localStorage.setItem(`${productToApprove.sellerId}-notifications`, JSON.stringify(sellerNotifications));
   };
   
   const rejectProduct = (id: string) => {
@@ -140,16 +150,12 @@ export const ProductsProvider: React.FC<{children: React.ReactNode}> = ({ childr
     updateProduct(id, { status: 'rejected' });
     
     // Notify seller about rejected product
-    const sellerNotifications = JSON.parse(localStorage.getItem(`${productToReject.sellerId}-notifications`) || '[]');
-    sellerNotifications.push({
-      id: `notif-${Date.now()}`,
+    addNotification({
       type: 'product-rejected',
       title: 'Product Rejected',
       message: `Your product "${productToReject.name}" has been rejected. Please review and resubmit.`,
-      createdAt: new Date().toISOString(),
-      read: false
+      metadata: { productId: id, sellerId: productToReject.sellerId }
     });
-    localStorage.setItem(`${productToReject.sellerId}-notifications`, JSON.stringify(sellerNotifications));
   };
   
   const getSellerProducts = (sellerId: string) => {

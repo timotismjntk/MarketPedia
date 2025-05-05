@@ -1,4 +1,3 @@
-
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -42,6 +41,7 @@ import SellerLiveStreamPage from "./pages/seller/LiveStreamPage";
 import SellerUploadPage from "./pages/seller/UploadPage";
 import SellerReviewsPage from "./pages/seller/ReviewsPage";
 import SellerProfileEditPage from "./pages/seller/ProfileEditPage";
+import SellerNotificationsPage from "./pages/seller/NotificationsPage";
 
 // Admin Pages
 import AdminDashboardPage from "./pages/admin/DashboardPage";
@@ -54,6 +54,15 @@ import AdminModerationPage from "./pages/admin/ModerationPage";
 import AdminNotificationsPage from "./pages/admin/NotificationsPage";
 import AdminCommissionPage from "./pages/admin/CommissionPage";
 
+// Order Status Pages
+import UnpaidOrdersPage from "./pages/orders/UnpaidOrdersPage";
+import PackedOrdersPage from "./pages/orders/PackedOrdersPage";
+import ShippedOrdersPage from "./pages/orders/ShippedOrdersPage";
+import RateOrdersPage from "./pages/orders/RateOrdersPage";
+
+// Account Settings Page
+import AccountSettingsPage from "./pages/AccountSettingsPage";
+
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,8 +71,8 @@ const App = () => (
   <QueryClientProvider client={queryClient}>
     <TooltipProvider>
       <AuthProvider>
-        <ProductsProvider>
-          <NotificationsProvider>
+        <NotificationsProvider>
+          <ProductsProvider>
             <CartProvider>
               <Toaster />
               <Sonner />
@@ -85,8 +94,13 @@ const App = () => (
                     <Route path="checkout" element={<CheckoutPage />} />
                     <Route path="payment" element={<PaymentPage />} />
                     <Route path="orders" element={<OrdersPage />} />
+                    <Route path="orders/unpaid" element={<UnpaidOrdersPage />} />
+                    <Route path="orders/packed" element={<PackedOrdersPage />} />
+                    <Route path="orders/shipped" element={<ShippedOrdersPage />} />
+                    <Route path="orders/rate" element={<RateOrdersPage />} />
                     <Route path="order/:id" element={<OrderTrackingPage />} />
                     <Route path="notifications" element={<NotificationsPage />} />
+                    <Route path="settings/account" element={<AccountSettingsPage />} />
                     <Route path="chat" element={<ChatPage />} />
                     <Route path="chat/:id" element={<ChatPage />} />
                     <Route path="loyalty" element={<LoyaltyPage />} />
@@ -111,6 +125,7 @@ const App = () => (
                     <Route path="chat/:id" element={<SellerChatPage />} />
                     <Route path="live" element={<SellerLiveStreamPage />} />
                     <Route path="upload" element={<SellerUploadPage />} />
+                    <Route path="notifications" element={<SellerNotificationsPage />} />
                   </Route>
                   
                   {/* Admin Routes */}
@@ -138,8 +153,8 @@ const App = () => (
                 </Routes>
               </BrowserRouter>
             </CartProvider>
-          </NotificationsProvider>
-        </ProductsProvider>
+          </ProductsProvider>
+        </NotificationsProvider>
       </AuthProvider>
     </TooltipProvider>
   </QueryClientProvider>

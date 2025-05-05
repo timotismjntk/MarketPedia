@@ -1,51 +1,152 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { MessageCircleMore, Bell } from 'lucide-react';
 import { categories, mockProducts } from '@/lib/mockData';
 import SearchBar from '@/components/ui/SearchBar';
 import ProductList from '@/components/products/ProductList';
 import { Link } from 'react-router-dom';
+import { toast } from '@/hooks/use-toast';
+
+const filterOptions = [
+  { label: 'All Products', value: 'all' },
+  { label: 'Price: Low to High', value: 'price-asc' },
+  { label: 'Price: High to Low', value: 'price-desc' },
+  { label: 'Newest First', value: 'newest' },
+  { label: 'Best Rating', value: 'rating' },
+];
 
 const Index: React.FC = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('Electronics');
+  const [selectedFilter, setSelectedFilter] = useState('all');
+  const [products, setProducts] = useState(mockProducts);
+
+  const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    
+    // Filter products based on search query
+    if (query.trim() === '') {
+      // Reset to original products if search is empty
+      setProducts(mockProducts);
+    } else {
+      const filtered = mockProducts.filter(
+        product => 
+          product.name.toLowerCase().includes(query.toLowerCase()) ||
+          product.description.toLowerCase().includes(query.toLowerCase())
+      );
+      setProducts(filtered);
+      toast({
+        title: `Search results`,
+        description: `Found ${filtered.length} products for "${query}"`,
+      });
+    }
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    
+    // Apply category filter
+    if (category === 'All') {
+      setProducts(mockProducts);
+    } else {
+      const filtered = mockProducts.filter(product => product.category === category);
+      setProducts(filtered);
+    }
+  };
+
+  const handleFilterChange = (filterValue: string) => {
+    setSelectedFilter(filterValue);
+    
+    // Apply selected sort/filter
+    let sortedProducts = [...products];
+    
+    switch(filterValue) {
+      case 'price-asc':
+        sortedProducts.sort((a, b) => a.price - b.price);
+        toast({
+          description: "Products sorted by price: low to high",
+        });
+        break;
+      case 'price-desc':
+        sortedProducts.sort((a, b) => b.price - a.price);
+        toast({
+          description: "Products sorted by price: high to low",
+        });
+        break;
+      case 'newest':
+        // In a real app, we'd use creation date
+        // For mock data, we'll just use the array in reverse
+        sortedProducts.reverse();
+        toast({
+          description: "Products sorted by newest first",
+        });
+        break;
+      case 'rating':
+        sortedProducts.sort((a, b) => b.rating - a.rating);
+        toast({
+          description: "Products sorted by highest rating",
+        });
+        break;
+      default:
+        // Reset to original sort
+        sortedProducts = mockProducts;
+    }
+    
+    setProducts(sortedProducts);
+  };
+
   return (
     <div className="app-container px-4 pt-4">
       <div className="flex justify-between items-center mb-4">
-  <h1 className="text-2xl font-bold text-gray-900">MartPedia</h1>
-  <div className="flex items-center gap-3">
-    <Link to={`/notifications`}>
-      <button className="p-2 text-gray-600 relative">
-        <Bell size={24} />
-        <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-      </button>
-    </Link>
-    <Link to={`/notifications`}>
-      <button className="p-2 text-gray-600 relative">
-        <MessageCircleMore size={24} />
-        {/* Badge with message count */}
-        <span className="absolute -top-1 -right-1 bg-primary text-white text-xs font-medium px-1.5 py-0.5 rounded-full">
-          2
-        </span>
-      </button>
-    </Link>
-  </div>
-</div>
-
+        <h1 className="text-2xl font-bold text-gray-900">MartPedia</h1>
+        <div className="flex items-center gap-3">
+          <Link to={`/notifications`}>
+            <button className="p-2 text-gray-600 relative">
+              <Bell size={24} />
+              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
+            </button>
+          </Link>
+          <Link to={`/chat`}>
+            <button className="p-2 text-gray-600 relative">
+              <MessageCircleMore size={24} />
+              {/* Badge with message count */}
+              <span className="absolute -top-1 -right-1 bg-primary text-white text-xs font-medium px-1.5 py-0.5 rounded-full">
+                2
+              </span>
+            </button>
+          </Link>
+        </div>
+      </div>
       
       <SearchBar 
-        onSearch={(query) => console.log(query)} 
-        onFilterClick={() => console.log('Filter clicked')}
+        onSearch={handleSearch}
+        filterOptions={filterOptions}
+        onFilterChange={handleFilterChange}
+        selectedFilter={selectedFilter}
       />
       
       <div className="my-4 overflow-x-auto">
         <div className="flex space-x-2 pb-2">
+          <button
+            key="all"
+            className={`whitespace-nowrap px-4 py-2 rounded-full text-sm ${
+              selectedCategory === 'All' 
+                ? 'bg-primary text-white' 
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+            onClick={() => handleCategoryChange('All')}
+          >
+            All
+          </button>
           {categories.map((category, index) => (
             <button
               key={index}
               className={`whitespace-nowrap px-4 py-2 rounded-full text-sm ${
-                index === 0 
+                category === selectedCategory 
                   ? 'bg-primary text-white' 
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
+              onClick={() => handleCategoryChange(category)}
             >
               {category}
             </button>
@@ -67,12 +168,12 @@ const Index: React.FC = () => {
       </div>
       
       <ProductList 
-        products={mockProducts.slice(0, 4)} 
+        products={products.slice(0, 4)} 
         title="Featured Products" 
       />
       
       <ProductList 
-        products={mockProducts.slice(4)} 
+        products={products.slice(4)} 
         title="New Arrivals" 
       />
     </div>

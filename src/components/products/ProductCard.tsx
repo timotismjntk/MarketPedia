@@ -9,6 +9,15 @@ interface ProductCardProps {
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
+  // Get seller ID based on seller name
+  const getSellerIdFromName = (sellerName: string) => {
+    if (sellerName === 'TechGadgets') return 'seller1';
+    if (sellerName === 'StyleHub') return 'seller2';
+    return 'unknown';
+  };
+
+  const sellerId = getSellerIdFromName(product.seller);
+
   return (
     <div className="product-card bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100">
       <Link to={`/product/${product.id}`}>
@@ -43,7 +52,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           <Star className="h-4 w-4 text-yellow-400 fill-yellow-400" />
           <span className="text-sm text-gray-700 ml-1">{product.rating}</span>
           <span className="text-xs text-gray-500 ml-1">({product.reviews})</span>
-          <Link to={`/seller/${product.seller === 'TechGadgets' ? 'seller1' : 'seller2'}`} 
+          <Link to={`/seller/${sellerId}`} 
                 className="text-xs text-primary hover:underline ml-auto">
             {product.seller}
           </Link>

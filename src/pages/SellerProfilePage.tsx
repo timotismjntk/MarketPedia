@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -13,7 +12,6 @@ import {
 import { Button } from '@/components/ui/button';
 import ProductList from '@/components/products/ProductList';
 import { mockProducts, Product } from '@/lib/mockData';
-import ChatModal from '@/components/ui/chat-modal';
 
 // Mock seller data
 const mockSellers = [
@@ -94,6 +92,13 @@ const SellerProfilePage: React.FC = () => {
     );
   }
 
+  const handleChatWithSeller = () => {
+    // Find if there's an existing chat with this seller
+    const sellerId = seller.id;
+    // Navigate to chat page - in a real app, would look for existing chat
+    navigate(`/chat/${sellerId}`);
+  };
+
   // Filter seller's products
   const sellerProducts = mockProducts
     .filter(product => product.seller === seller.name)
@@ -142,11 +147,13 @@ const SellerProfilePage: React.FC = () => {
                   <span className="text-gray-500 ml-1">({seller.reviews} reviews)</span>
                 </div>
               </div>
-              <ChatModal 
-                productId={id || 'unknown'} 
-                sellerName={seller.name}
-                sellerAvatar={seller.avatar}
-              />
+              <Button 
+                onClick={handleChatWithSeller}
+                className="flex items-center gap-2"
+              >
+                <MessageSquare size={18} />
+                Chat with Seller
+              </Button>
             </div>
           </div>
         </div>

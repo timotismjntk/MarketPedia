@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string;
   name: string;
@@ -10,6 +9,7 @@ export interface Product {
   rating: number;
   reviews: number;
   inStock: boolean;
+  status?: 'active' | 'pending' | 'rejected';
 }
 
 export interface User {
@@ -42,7 +42,8 @@ export const mockProducts: Product[] = [
     seller: 'TechGadgets',
     rating: 4.8,
     reviews: 243,
-    inStock: true
+    inStock: true,
+    status: 'active'
   },
   {
     id: '2',
@@ -54,7 +55,8 @@ export const mockProducts: Product[] = [
     seller: 'StyleHub',
     rating: 4.5,
     reviews: 189,
-    inStock: true
+    inStock: true,
+    status: 'active'
   },
   {
     id: '3',
@@ -66,7 +68,8 @@ export const mockProducts: Product[] = [
     seller: 'SmartHome',
     rating: 4.7,
     reviews: 312,
-    inStock: true
+    inStock: true,
+    status: 'active'
   },
   {
     id: '4',
@@ -78,7 +81,8 @@ export const mockProducts: Product[] = [
     seller: 'NaturalBeauty',
     rating: 4.6,
     reviews: 157,
-    inStock: true
+    inStock: true,
+    status: 'active'
   },
   {
     id: '5',
@@ -90,7 +94,8 @@ export const mockProducts: Product[] = [
     seller: 'FitGear',
     rating: 4.4,
     reviews: 276,
-    inStock: false
+    inStock: false,
+    status: 'active'
   },
   {
     id: '6',
@@ -102,7 +107,8 @@ export const mockProducts: Product[] = [
     seller: 'HomeOffice',
     rating: 4.9,
     reviews: 124,
-    inStock: true
+    inStock: true,
+    status: 'active'
   },
   {
     id: '7',
@@ -114,7 +120,8 @@ export const mockProducts: Product[] = [
     seller: 'BookWorld',
     rating: 4.7,
     reviews: 531,
-    inStock: true
+    inStock: true,
+    status: 'active'
   },
   {
     id: '8',
@@ -126,7 +133,8 @@ export const mockProducts: Product[] = [
     seller: 'EduToys',
     rating: 4.5,
     reviews: 98,
-    inStock: true
+    inStock: true,
+    status: 'active'
   }
 ];
 

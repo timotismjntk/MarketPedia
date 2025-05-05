@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
@@ -135,7 +134,7 @@ export const NotificationsProvider: React.FC<{children: React.ReactNode}> = ({ c
       clearAll
     }}>
       {children}
-    </NoticationsContext.Provider>
+    </NotificationsContext.Provider>
   );
 };
 

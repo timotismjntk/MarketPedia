@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { 
   User, Settings, LogOut, ShoppingBag, 
   Heart, Star, Truck, MapPin, Gem, Bell, Edit,
   Package, CheckCircle
 } from 'lucide-react';
-import { currentUser } from '@/lib/mockData';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
 import { Button } from '@/components/ui/button';

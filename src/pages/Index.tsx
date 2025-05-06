@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
@@ -148,7 +147,6 @@ function Index() {
         <ProductList 
           products={featuredProducts} 
           title="Featured Products" 
-          seeAllLink="/products?featured=true"
         />
       </div>
       
@@ -157,7 +155,6 @@ function Index() {
         <ProductList 
           products={newArrivals} 
           title="New Arrivals" 
-          seeAllLink="/products?new=true"
         />
       </div>
       

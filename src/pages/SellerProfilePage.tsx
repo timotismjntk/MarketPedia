@@ -1,20 +1,13 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { 
-  User, 
-  Star, 
-  MapPin, 
-  Clock, 
-  MessageSquare, 
-  ShoppingBag,
-  Search,
-  Video
-} from 'lucide-react';
+import { User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import ProductList from '@/components/products/ProductList';
-import { mockProducts, Product, mockLiveStreams } from '@/lib/mockData';
+import { mockProducts, mockLiveStreams } from '@/lib/mockData';
 import LiveStreamPopup from '@/components/live/LiveStreamPopup';
+import SellerProfileHeader from '@/components/seller/SellerProfileHeader';
+import SellerProductSearch from '@/components/seller/SellerProductSearch';
+import SellerProductSection from '@/components/seller/SellerProductSection';
 
 // Mock seller data
 const mockSellers = [
@@ -117,6 +110,19 @@ const SellerProfilePage: React.FC = () => {
     navigate(`/chat/${sellerId}`);
   };
 
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+  };
+
+  const handleClearFilters = () => {
+    setSearchQuery('');
+    setSelectedCategory('All');
+  };
+
   // Filter seller's products
   const sellerProducts = mockProducts
     .filter(product => product.seller === seller.name)
@@ -133,147 +139,27 @@ const SellerProfilePage: React.FC = () => {
 
   return (
     <div className="app-container pb-16">
-      {/* Cover Image */}
-      <div 
-        className="w-full h-48 bg-gray-300 bg-cover bg-center"
-        style={{ backgroundImage: `url(${seller.coverImage})` }}
-      >
-        <div className="w-full h-full bg-black/20 flex items-center justify-center">
-          <h1 className="text-white text-3xl font-bold shadow-text">
-            {seller.name}
-          </h1>
-        </div>
-      </div>
-      
-      {/* Seller Profile Info */}
-      <div className="px-4 pt-4 pb-2">
-        <div className="flex items-start">
-          <div className="w-20 h-20 rounded-full bg-white border-4 border-white shadow-lg overflow-hidden -mt-10">
-            <img 
-              src={seller.avatar} 
-              alt={seller.name}
-              className="w-full h-full object-cover"
-            />
-          </div>
-          <div className="ml-4 flex-1">
-            <div className="flex justify-between items-start">
-              <div>
-                <h1 className="text-xl font-bold">{seller.name}</h1>
-                <div className="flex items-center mt-1">
-                  <Star className="h-5 w-5 text-yellow-400 fill-yellow-400" />
-                  <span className="ml-1 font-medium">{seller.rating}</span>
-                  <span className="text-gray-500 ml-1">({seller.reviews} reviews)</span>
-                </div>
-              </div>
-              <div className="flex flex-col sm:flex-row gap-2">
-                {liveStream && (
-                  <Button 
-                    onClick={() => navigate(`/live/${liveStream.id}`)}
-                    variant="destructive"
-                    className="flex items-center gap-2"
-                  >
-                    <Video size={18} />
-                    Watch Live
-                  </Button>
-                )}
-                <Button 
-                  onClick={handleChatWithSeller}
-                  className="flex items-center gap-2"
-                >
-                  <MessageSquare size={18} />
-                  Chat with Seller
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-        
-        <p className="mt-4 text-gray-600">{seller.description}</p>
-        
-        <div className="grid grid-cols-2 gap-4 my-4">
-          <div className="flex items-center text-gray-600">
-            <MapPin size={16} className="mr-2" />
-            <span>{seller.location}</span>
-          </div>
-          <div className="flex items-center text-gray-600">
-            <Clock size={16} className="mr-2" />
-            <span>Joined {seller.joinedDate}</span>
-          </div>
-          <div className="flex items-center text-gray-600">
-            <MessageSquare size={16} className="mr-2" />
-            <span>Response rate: {seller.responseRate}</span>
-          </div>
-          <div className="flex items-center text-gray-600">
-            <ShoppingBag size={16} className="mr-2" />
-            <span>{seller.products} products</span>
-          </div>
-        </div>
-      </div>
+      {/* Seller Profile Header */}
+      <SellerProfileHeader 
+        seller={seller}
+        liveStream={liveStream}
+        onChatClick={handleChatWithSeller}
+      />
       
       {/* Search and Filters */}
-      <div className="px-4 py-2 border-t border-b bg-gray-50">
-        <div className="relative mb-4">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search className="text-gray-400" size={18} />
-          </div>
-          <input
-            type="text"
-            placeholder="Search in this shop..."
-            className="pl-10 w-full p-2 border rounded-lg focus:outline-none focus:ring-1 focus:ring-primary"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-        </div>
-        
-        <div className="flex overflow-x-auto gap-2 pb-2">
-          <button
-            className={`whitespace-nowrap px-4 py-2 rounded-full text-sm ${
-              selectedCategory === 'All' 
-                ? 'bg-primary text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-            onClick={() => setSelectedCategory('All')}
-          >
-            All
-          </button>
-          {seller.categories.map((category: string, index: number) => (
-            <button
-              key={index}
-              className={`whitespace-nowrap px-4 py-2 rounded-full text-sm ${
-                category === selectedCategory 
-                  ? 'bg-primary text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              onClick={() => setSelectedCategory(category)}
-            >
-              {category}
-            </button>
-          ))}
-        </div>
-      </div>
+      <SellerProductSearch
+        categories={seller.categories}
+        selectedCategory={selectedCategory}
+        onCategoryChange={handleCategoryChange}
+        searchQuery={searchQuery}
+        onSearchChange={handleSearchChange}
+      />
       
       {/* Product List */}
-      <div className="px-4">
-        <ProductList 
-          products={sellerProducts}
-          title={`${sellerProducts.length} Products`} 
-        />
-        
-        {sellerProducts.length === 0 && (
-          <div className="text-center py-10">
-            <p className="text-gray-500">No products found matching your criteria.</p>
-            <button 
-              className="mt-2 text-primary hover:underline"
-              onClick={() => {
-                setSearchQuery('');
-                setSelectedCategory('All');
-              }}
-            >
-              Clear filters
-            </button>
-          </div>
-        )}
-      </div>
+      <SellerProductSection 
+        products={sellerProducts}
+        onClearFilters={handleClearFilters}
+      />
       
       {/* Live Stream Popup */}
       {liveStream && showLivePopup && (

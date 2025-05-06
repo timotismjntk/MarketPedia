@@ -8,10 +8,10 @@ const MainLayout: React.FC = () => {
   const hideBottomNav = ['/checkout', '/payment'].includes(location.pathname);
   
   return (
-    <div className="app-container min-h-screen flex flex-col">
-      <div className="flex-1 pb-16">
+    <div className="app-container min-h-screen flex flex-col bg-white">
+      <main className="flex-1 pb-16">
         <Outlet />
-      </div>
+      </main>
       {!hideBottomNav && <BottomNavigation />}
     </div>
   );

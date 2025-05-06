@@ -51,7 +51,6 @@ const BottomNavigation: React.FC = () => {
           onClick={() => handleNavClick('/live')}
         >
           <Video size={20} />
-          {/* Add a highlight indicator to make it more noticeable */}
           <span className="absolute -top-1 -right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
           <span className="text-xs mt-1">Live</span>
         </button>

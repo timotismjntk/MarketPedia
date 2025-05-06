@@ -37,6 +37,24 @@ const LiveStreamPopup: React.FC<LiveStreamPopupProps> = ({ stream, onClose }) =>
     };
     
     setPosition(calculateInitialPosition());
+    
+    // Add animation to make the popup more noticeable when it first appears
+    const timer = setTimeout(() => {
+      const shakePositions = [
+        { x: position.x - 5, y: position.y },
+        { x: position.x + 5, y: position.y },
+        { x: position.x, y: position.y }
+      ];
+      
+      let i = 0;
+      const shakeInterval = setInterval(() => {
+        setPosition(shakePositions[i % 3]);
+        i++;
+        if (i > 5) clearInterval(shakeInterval);
+      }, 100);
+    }, 1000);
+    
+    return () => clearTimeout(timer);
   }, [isMinimized]);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -158,7 +176,8 @@ const LiveStreamPopup: React.FC<LiveStreamPopupProps> = ({ stream, onClose }) =>
       style={{
         left: `${position.x}px`,
         top: `${position.y}px`,
-        transition: isDragging ? 'none' : 'all 0.2s ease'
+        transition: isDragging ? 'none' : 'all 0.2s ease',
+        animation: 'pulse 2s infinite'
       }}
       onMouseDown={handleMouseDown}
       onMouseMove={handleMouseMove}
@@ -166,6 +185,15 @@ const LiveStreamPopup: React.FC<LiveStreamPopupProps> = ({ stream, onClose }) =>
       onTouchStart={handleTouchStart}
       onClick={isMinimized ? handleToggleSize : handleClick}
     >
+      <style>
+        {`
+          @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
+          }
+        `}
+      </style>
       {isMinimized ? (
         <div className="flex items-center bg-primary text-white p-2 pr-3">
           <Badge variant="destructive" className="flex items-center mr-2">

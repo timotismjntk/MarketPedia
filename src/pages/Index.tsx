@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ChevronRight, 
@@ -13,10 +14,12 @@ import { Button } from '@/components/ui/button';
 import ProductList from '@/components/products/ProductList';
 import { mockProducts, categories, mockLiveStreams } from '@/lib/mockData';
 import { useAuth } from '@/hooks/useAuth';
+import { useToast } from '@/hooks/use-toast';
 
 function Index() {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { toast } = useToast();
   
   // Only get live streams that are actually live
   const activeLiveStreams = mockLiveStreams.filter(stream => stream.isLive);
@@ -39,6 +42,19 @@ function Index() {
     if (diffMins < 60) return `${diffMins}m ago`;
     return `${Math.floor(diffMins / 60)}h ago`;
   };
+
+  // Show a notification about live streams when the page loads
+  useEffect(() => {
+    if (activeLiveStreams.length > 0) {
+      setTimeout(() => {
+        toast({
+          title: "Live Streams Available!",
+          description: `${activeLiveStreams.length} sellers are currently streaming. Check it out!`,
+          duration: 5000,
+        });
+      }, 1500);
+    }
+  }, []);
   
   return (
     <div className="app-container px-4 pb-16">
@@ -53,35 +69,9 @@ function Index() {
         </div>
       </div>
       
-      {/* Categories */}
-      <div className="py-4">
-        <div className="flex justify-between items-center mb-3">
-          <h2 className="font-semibold text-lg">Categories</h2>
-          <Link to="/products" className="flex items-center text-sm text-primary">
-            <span>View all</span>
-            <ChevronRight className="h-4 w-4" />
-          </Link>
-        </div>
-        
-        <div className="grid grid-cols-4 gap-2">
-          {categories.slice(0, 8).map((category, index) => (
-            <Link
-              to={`/products?category=${category}`}
-              key={index}
-              className="flex flex-col items-center"
-            >
-              <div className="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-1">
-                <span className="text-primary text-xl">{category.charAt(0)}</span>
-              </div>
-              <span className="text-xs text-center">{category}</span>
-            </Link>
-          ))}
-        </div>
-      </div>
-      
-      {/* Live Streams Section */}
+      {/* Live Streams Section - Moved to the top for more visibility */}
       {activeLiveStreams.length > 0 && (
-        <div className="py-4">
+        <div className="py-4 relative">
           <div className="flex justify-between items-center mb-3">
             <div className="flex items-center">
               <Badge variant="destructive" className="mr-2">LIVE</Badge>
@@ -139,8 +129,45 @@ function Index() {
               </div>
             ))}
           </div>
+          
+          {/* Call to action button */}
+          <div className="flex justify-center mt-3">
+            <Button 
+              onClick={() => navigate('/live')}
+              className="bg-red-600 hover:bg-red-700 text-white"
+            >
+              <Video className="mr-2 h-4 w-4" />
+              View All Live Streams
+            </Button>
+          </div>
         </div>
       )}
+      
+      {/* Categories */}
+      <div className="py-4">
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="font-semibold text-lg">Categories</h2>
+          <Link to="/products" className="flex items-center text-sm text-primary">
+            <span>View all</span>
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+        </div>
+        
+        <div className="grid grid-cols-4 gap-2">
+          {categories.slice(0, 8).map((category, index) => (
+            <Link
+              to={`/products?category=${category}`}
+              key={index}
+              className="flex flex-col items-center"
+            >
+              <div className="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-1">
+                <span className="text-primary text-xl">{category.charAt(0)}</span>
+              </div>
+              <span className="text-xs text-center">{category}</span>
+            </Link>
+          ))}
+        </div>
+      </div>
       
       {/* Featured Products */}
       <div className="py-4">

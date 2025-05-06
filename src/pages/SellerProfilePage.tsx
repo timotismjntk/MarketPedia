@@ -25,7 +25,8 @@ const mockSellers = [
     responseTime: 'Within 1 hour',
     followers: 1280,
     products: 86,
-    categories: ['Electronics', 'Accessories', 'Gadgets']
+    categories: ['Electronics', 'Accessories', 'Gadgets'],
+    isLive: true // Added to control whether seller is live
   },
   {
     id: 'seller2',
@@ -41,7 +42,8 @@ const mockSellers = [
     responseTime: 'Within 2 hours',
     followers: 950,
     products: 124,
-    categories: ['Fashion', 'Clothing', 'Accessories']
+    categories: ['Fashion', 'Clothing', 'Accessories'],
+    isLive: false
   }
 ];
 
@@ -67,8 +69,22 @@ const SellerProfilePage: React.FC = () => {
           stream => stream.sellerId === foundSeller.id && stream.isLive
         );
         
-        if (activeStream) {
-          setLiveStream(activeStream);
+        if (activeStream || foundSeller.isLive) {
+          // If no specific active stream found but seller is live, use a demo stream
+          const demoStream = activeStream || {
+            id: 'demo-stream',
+            title: `${foundSeller.name} Live Demo`,
+            thumbnailImage: 'https://images.unsplash.com/photo-1618160702438-9b02ab6515c9',
+            sellerName: foundSeller.name,
+            sellerId: foundSeller.id,
+            isLive: true,
+            startedAt: new Date().toISOString(),
+            viewers: 24,
+            featuredProducts: []
+          };
+          
+          setLiveStream(demoStream);
+          // Always show popup for demonstration purposes
           setShowLivePopup(true);
         }
       }
@@ -122,6 +138,12 @@ const SellerProfilePage: React.FC = () => {
     setSearchQuery('');
     setSelectedCategory('All');
   };
+  
+  const handleWatchLiveStream = () => {
+    if (liveStream) {
+      navigate(`/live/${liveStream.id}`);
+    }
+  };
 
   // Filter seller's products
   const sellerProducts = mockProducts
@@ -144,6 +166,7 @@ const SellerProfilePage: React.FC = () => {
         seller={seller}
         liveStream={liveStream}
         onChatClick={handleChatWithSeller}
+        onWatchLiveClick={handleWatchLiveStream}
       />
       
       {/* Search and Filters */}
@@ -161,7 +184,7 @@ const SellerProfilePage: React.FC = () => {
         onClearFilters={handleClearFilters}
       />
       
-      {/* Live Stream Popup */}
+      {/* Live Stream Popup - Show by default for demonstration for seller1 */}
       {liveStream && showLivePopup && (
         <LiveStreamPopup 
           stream={liveStream} 

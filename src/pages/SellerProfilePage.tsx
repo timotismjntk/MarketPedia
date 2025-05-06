@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { 
@@ -7,11 +8,13 @@ import {
   Clock, 
   MessageSquare, 
   ShoppingBag,
-  Search
+  Search,
+  Video
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ProductList from '@/components/products/ProductList';
-import { mockProducts, Product } from '@/lib/mockData';
+import { mockProducts, Product, mockLiveStreams } from '@/lib/mockData';
+import LiveStreamPopup from '@/components/live/LiveStreamPopup';
 
 // Mock seller data
 const mockSellers = [
@@ -56,12 +59,27 @@ const SellerProfilePage: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [liveStream, setLiveStream] = useState<any>(null);
+  const [showLivePopup, setShowLivePopup] = useState(false);
 
   useEffect(() => {
     // Simulate API fetch
     const timer = setTimeout(() => {
       const foundSeller = mockSellers.find(s => s.id === id);
       setSeller(foundSeller || null);
+      
+      // Check if seller has an active live stream
+      if (foundSeller) {
+        const activeStream = mockLiveStreams.find(
+          stream => stream.sellerId === foundSeller.id && stream.isLive
+        );
+        
+        if (activeStream) {
+          setLiveStream(activeStream);
+          setShowLivePopup(true);
+        }
+      }
+      
       setLoading(false);
     }, 300);
     
@@ -147,13 +165,25 @@ const SellerProfilePage: React.FC = () => {
                   <span className="text-gray-500 ml-1">({seller.reviews} reviews)</span>
                 </div>
               </div>
-              <Button 
-                onClick={handleChatWithSeller}
-                className="flex items-center gap-2"
-              >
-                <MessageSquare size={18} />
-                Chat with Seller
-              </Button>
+              <div className="flex flex-col sm:flex-row gap-2">
+                {liveStream && (
+                  <Button 
+                    onClick={() => navigate(`/live/${liveStream.id}`)}
+                    variant="destructive"
+                    className="flex items-center gap-2"
+                  >
+                    <Video size={18} />
+                    Watch Live
+                  </Button>
+                )}
+                <Button 
+                  onClick={handleChatWithSeller}
+                  className="flex items-center gap-2"
+                >
+                  <MessageSquare size={18} />
+                  Chat with Seller
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -244,6 +274,14 @@ const SellerProfilePage: React.FC = () => {
           </div>
         )}
       </div>
+      
+      {/* Live Stream Popup */}
+      {liveStream && showLivePopup && (
+        <LiveStreamPopup 
+          stream={liveStream} 
+          onClose={() => setShowLivePopup(false)} 
+        />
+      )}
     </div>
   );
 };

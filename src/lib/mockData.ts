@@ -15,6 +15,19 @@ export interface Product {
   status?: 'active' | 'pending' | 'rejected';
 }
 
+export interface LiveStream {
+  id: string;
+  title: string;
+  sellerId: string;
+  sellerName: string;
+  sellerAvatar: string;
+  thumbnailImage: string;
+  isLive: boolean;
+  viewers: number;
+  startedAt: string;
+  featuredProducts: string[]; // Product IDs
+}
+
 export const categories = [
   'Electronics',
   'Home & Kitchen',
@@ -139,4 +152,44 @@ export const orderStatuses = [
   { key: 'to-ship', label: 'Packed', count: 3, route: '/orders/packed' },
   { key: 'to-receive', label: 'Shipped', count: 1, route: '/orders/shipped' },
   { key: 'to-review', label: 'Rate', count: 4, route: '/orders/rate' }
+];
+
+// Mock LiveStreams data
+export const mockLiveStreams: LiveStream[] = [
+  {
+    id: 'ls1',
+    title: 'Latest Electronics Demo',
+    sellerId: 'seller1',
+    sellerName: 'TechGadgets',
+    sellerAvatar: '/placeholder.svg',
+    thumbnailImage: 'https://picsum.photos/id/1/800/600',
+    isLive: true,
+    viewers: 245,
+    startedAt: new Date(Date.now() - 35 * 60000).toISOString(), // 35 minutes ago
+    featuredProducts: ['p1', 'p2', 'p6', 'p8']
+  },
+  {
+    id: 'ls2',
+    title: 'Summer Fashion Collection',
+    sellerId: 'seller2',
+    sellerName: 'StyleHub',
+    sellerAvatar: '/placeholder.svg',
+    thumbnailImage: 'https://picsum.photos/id/41/800/600',
+    isLive: true,
+    viewers: 187,
+    startedAt: new Date(Date.now() - 15 * 60000).toISOString(), // 15 minutes ago
+    featuredProducts: ['p4', 'p5']
+  },
+  {
+    id: 'ls3',
+    title: 'Coming Soon: Kitchen Essentials',
+    sellerId: 'seller3',
+    sellerName: 'HomeOffice',
+    sellerAvatar: '/placeholder.svg',
+    thumbnailImage: 'https://picsum.photos/id/61/800/600',
+    isLive: false, // scheduled
+    viewers: 0,
+    startedAt: new Date(Date.now() + 120 * 60000).toISOString(), // 2 hours from now
+    featuredProducts: ['p3', 'p7']
+  }
 ];

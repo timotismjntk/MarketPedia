@@ -1,183 +1,192 @@
 
-import React, { useState } from 'react';
-import { MessageCircleMore, Bell } from 'lucide-react';
-import { categories, mockProducts } from '@/lib/mockData';
-import SearchBar from '@/components/ui/SearchBar';
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { 
+  ChevronRight, 
+  Search, 
+  MessageSquare,
+  Video,
+  Users,
+  Clock
+} from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import ProductList from '@/components/products/ProductList';
-import { Link } from 'react-router-dom';
-import { toast } from '@/hooks/use-toast';
+import { mockProducts, categories, mockLiveStreams } from '@/lib/mockData';
+import { useAuth } from '@/hooks/useAuth';
 
-const filterOptions = [
-  { label: 'All Products', value: 'all' },
-  { label: 'Price: Low to High', value: 'price-asc' },
-  { label: 'Price: High to Low', value: 'price-desc' },
-  { label: 'Newest First', value: 'newest' },
-  { label: 'Best Rating', value: 'rating' },
-];
-
-const Index: React.FC = () => {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('Electronics');
-  const [selectedFilter, setSelectedFilter] = useState('all');
-  const [products, setProducts] = useState(mockProducts);
-
-  const handleSearch = (query: string) => {
-    setSearchQuery(query);
+function Index() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  
+  // Only get live streams that are actually live
+  const activeLiveStreams = mockLiveStreams.filter(stream => stream.isLive);
+  
+  // Get featured products (different ways to select featured products)
+  const featuredProducts = mockProducts
+    .filter(product => product.rating >= 4.5)
+    .slice(0, 4);
     
-    // Filter products based on search query
-    if (query.trim() === '') {
-      // Reset to original products if search is empty
-      setProducts(mockProducts);
-    } else {
-      const filtered = mockProducts.filter(
-        product => 
-          product.name.toLowerCase().includes(query.toLowerCase()) ||
-          product.description.toLowerCase().includes(query.toLowerCase())
-      );
-      setProducts(filtered);
-      toast({
-        title: `Search results`,
-        description: `Found ${filtered.length} products for "${query}"`,
-      });
-    }
+  const newArrivals = [...mockProducts]
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 4);
+    
+  const formatTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffMs = now.getTime() - date.getTime();
+    const diffMins = Math.floor(diffMs / 60000);
+    
+    if (diffMins < 60) return `${diffMins}m ago`;
+    return `${Math.floor(diffMins / 60)}h ago`;
   };
-
-  const handleCategoryChange = (category: string) => {
-    setSelectedCategory(category);
-    
-    // Apply category filter
-    if (category === 'All') {
-      setProducts(mockProducts);
-    } else {
-      const filtered = mockProducts.filter(product => product.category === category);
-      setProducts(filtered);
-    }
-  };
-
-  const handleFilterChange = (filterValue: string) => {
-    setSelectedFilter(filterValue);
-    
-    // Apply selected sort/filter
-    let sortedProducts = [...products];
-    
-    switch(filterValue) {
-      case 'price-asc':
-        sortedProducts.sort((a, b) => a.price - b.price);
-        toast({
-          description: "Products sorted by price: low to high",
-        });
-        break;
-      case 'price-desc':
-        sortedProducts.sort((a, b) => b.price - a.price);
-        toast({
-          description: "Products sorted by price: high to low",
-        });
-        break;
-      case 'newest':
-        // In a real app, we'd use creation date
-        // For mock data, we'll just use the array in reverse
-        sortedProducts.reverse();
-        toast({
-          description: "Products sorted by newest first",
-        });
-        break;
-      case 'rating':
-        sortedProducts.sort((a, b) => b.rating - a.rating);
-        toast({
-          description: "Products sorted by highest rating",
-        });
-        break;
-      default:
-        // Reset to original sort
-        sortedProducts = mockProducts;
-    }
-    
-    setProducts(sortedProducts);
-  };
-
+  
   return (
-    <div className="app-container px-4 pt-4">
-      <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-gray-900">MartPedia</h1>
-        <div className="flex items-center gap-3">
-          <Link to={`/notifications`}>
-            <button className="p-2 text-gray-600 relative">
-              <Bell size={24} />
-              <span className="absolute top-1 right-1 w-2 h-2 bg-primary rounded-full"></span>
-            </button>
-          </Link>
-          <Link to={`/chat`}>
-            <button className="p-2 text-gray-600 relative">
-              <MessageCircleMore size={24} />
-              {/* Badge with message count */}
-              <span className="absolute -top-1 -right-1 bg-primary text-white text-xs font-medium px-1.5 py-0.5 rounded-full">
-                2
-              </span>
-            </button>
-          </Link>
+    <div className="app-container px-4 pb-16">
+      {/* Search Bar */}
+      <div className="pt-4 pb-2">
+        <div 
+          className="bg-gray-100 rounded-full p-3 flex items-center"
+          onClick={() => navigate('/products')}
+        >
+          <Search className="h-5 w-5 text-gray-500 mr-2" />
+          <span className="text-gray-500">Search products, brands, and more...</span>
         </div>
       </div>
       
-      <SearchBar 
-        onSearch={handleSearch}
-        filterOptions={filterOptions}
-        onFilterChange={handleFilterChange}
-        selectedFilter={selectedFilter}
-      />
-      
-      <div className="my-4 overflow-x-auto">
-        <div className="flex space-x-2 pb-2">
-          <button
-            key="all"
-            className={`whitespace-nowrap px-4 py-2 rounded-full text-sm ${
-              selectedCategory === 'All' 
-                ? 'bg-primary text-white' 
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-            }`}
-            onClick={() => handleCategoryChange('All')}
-          >
-            All
-          </button>
-          {categories.map((category, index) => (
-            <button
+      {/* Categories */}
+      <div className="py-4">
+        <div className="flex justify-between items-center mb-3">
+          <h2 className="font-semibold text-lg">Categories</h2>
+          <Link to="/products" className="flex items-center text-sm text-primary">
+            <span>View all</span>
+            <ChevronRight className="h-4 w-4" />
+          </Link>
+        </div>
+        
+        <div className="grid grid-cols-4 gap-2">
+          {categories.slice(0, 8).map((category, index) => (
+            <Link
+              to={`/products?category=${category}`}
               key={index}
-              className={`whitespace-nowrap px-4 py-2 rounded-full text-sm ${
-                category === selectedCategory 
-                  ? 'bg-primary text-white' 
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-              onClick={() => handleCategoryChange(category)}
+              className="flex flex-col items-center"
             >
-              {category}
-            </button>
+              <div className="w-16 h-16 rounded-full bg-primary bg-opacity-10 flex items-center justify-center mb-1">
+                <span className="text-primary text-xl">{category.charAt(0)}</span>
+              </div>
+              <span className="text-xs text-center">{category}</span>
+            </Link>
           ))}
         </div>
       </div>
       
-      <div className="mb-6">
-        <div className="bg-primary/10 rounded-xl p-4 relative overflow-hidden">
-          <div className="w-3/4">
-            <h2 className="text-xl font-bold mb-2">Summer Sale!</h2>
-            <p className="text-gray-700 mb-4">Get up to 50% off on selected items</p>
-            <button className="bg-primary text-white px-4 py-2 rounded-lg text-sm">
-              Shop Now
-            </button>
+      {/* Live Streams Section */}
+      {activeLiveStreams.length > 0 && (
+        <div className="py-4">
+          <div className="flex justify-between items-center mb-3">
+            <div className="flex items-center">
+              <Badge variant="destructive" className="mr-2">LIVE</Badge>
+              <h2 className="font-semibold text-lg">Streaming Now</h2>
+            </div>
+            <Link to="/live" className="flex items-center text-sm text-primary">
+              <span>See all</span>
+              <ChevronRight className="h-4 w-4" />
+            </Link>
           </div>
-          <div className="absolute right-0 bottom-0 h-full w-1/3 bg-primary/20 rounded-l-full"></div>
+          
+          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
+            {activeLiveStreams.map(stream => (
+              <div
+                key={stream.id}
+                className="flex-none w-[280px] rounded-lg overflow-hidden border hover:shadow-md transition-shadow cursor-pointer"
+                onClick={() => navigate(`/live/${stream.id}`)}
+              >
+                <div className="relative">
+                  <img 
+                    src={stream.thumbnailImage}
+                    alt={stream.title}
+                    className="w-full h-40 object-cover"
+                  />
+                  <div className="absolute top-2 left-2 flex space-x-2">
+                    <Badge variant="destructive" className="flex items-center">
+                      <span className="w-2 h-2 bg-white rounded-full mr-1 animate-pulse"></span>
+                      LIVE
+                    </Badge>
+                    <Badge variant="secondary" className="flex items-center">
+                      <Users size={14} className="mr-1" />
+                      {stream.viewers}
+                    </Badge>
+                  </div>
+                  <div className="absolute top-2 right-2">
+                    <Badge variant="outline" className="bg-black/60 text-white border-none">
+                      {formatTimeAgo(stream.startedAt)}
+                    </Badge>
+                  </div>
+                </div>
+                
+                <div className="p-3">
+                  <div className="flex items-center mb-2">
+                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden mr-2">
+                      <img 
+                        src={stream.sellerAvatar}
+                        alt={stream.sellerName}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <span className="font-medium text-sm">{stream.sellerName}</span>
+                  </div>
+                  <h3 className="font-medium">{stream.title}</h3>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
+      )}
+      
+      {/* Featured Products */}
+      <div className="py-4">
+        <ProductList 
+          products={featuredProducts} 
+          title="Featured Products" 
+          seeAllLink="/products?featured=true"
+        />
       </div>
       
-      <ProductList 
-        products={products.slice(0, 4)} 
-        title="Featured Products" 
-      />
+      {/* New Arrivals */}
+      <div className="py-4">
+        <ProductList 
+          products={newArrivals} 
+          title="New Arrivals" 
+          seeAllLink="/products?new=true"
+        />
+      </div>
       
-      <ProductList 
-        products={products.slice(4)} 
-        title="New Arrivals" 
-      />
+      {/* CTA for Seller */}
+      {!user?.role || user?.role === 'buyer' ? (
+        <div className="py-4 my-4 bg-gradient-to-r from-primary to-purple-700 rounded-lg text-white p-5 text-center">
+          <h2 className="text-xl font-bold mb-2">Start Selling Today!</h2>
+          <p className="mb-4">Join thousands of sellers and reach millions of customers.</p>
+          <div className="flex flex-col sm:flex-row justify-center gap-3">
+            <Button 
+              variant="outline"
+              className="text-white border-white hover:bg-white hover:text-primary"
+              onClick={() => navigate('/auth')}
+            >
+              Create Seller Account
+            </Button>
+            <Button 
+              variant="default"
+              className="bg-white text-primary hover:bg-gray-100"
+              onClick={() => navigate('/live')}
+            >
+              <Video size={18} className="mr-2" />
+              Watch Live Streams
+            </Button>
+          </div>
+        </div>
+      ) : null}
     </div>
   );
-};
+}
 
 export default Index;

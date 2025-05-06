@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import { ThemeProvider } from '@/components/ui/theme-provider';
 
 // Main Layout
 import MainLayout from '@/components/layout/MainLayout';
@@ -34,6 +33,8 @@ import ProfileEditPage from '@/pages/ProfileEditPage';
 import SellerProfilePage from '@/pages/SellerProfilePage';
 import LoyaltyPage from '@/pages/LoyaltyPage';
 import NotificationsPage from '@/pages/NotificationsPage';
+import LiveStreamsPage from '@/pages/LiveStreamsPage';
+import LiveStreamViewPage from '@/pages/LiveStreamViewPage';
 
 // Order status pages
 import UnpaidOrdersPage from '@/pages/orders/UnpaidOrdersPage';
@@ -72,93 +73,93 @@ import { Toaster } from "@/components/ui/toaster";
 
 function App() {
   return (
-    <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <AuthProvider>
-        <NotificationsProvider>
-          <ProductsProvider>
-            <CartProvider>
-              <Router>
-                <Routes>
-                  {/* Auth Routes */}
-                  <Route path="/auth" element={<AuthPage />} />
+    <AuthProvider>
+      <NotificationsProvider>
+        <ProductsProvider>
+          <CartProvider>
+            <Router>
+              <Routes>
+                {/* Auth Routes */}
+                <Route path="/auth" element={<AuthPage />} />
 
-                  {/* Main Application Routes */}
-                  <Route element={<MainLayout />}>
-                    <Route path="/" element={<Index />} />
-                    <Route path="/products" element={<ProductsPage />} />
-                    <Route path="/product/:id" element={<ProductDetailPage />} />
-                    <Route path="/seller/:id" element={<SellerProfilePage />} />
-                    <Route path="/cart" element={<CartPage />} />
-                    <Route path="/notifications" element={<NotificationsPage />} />
-                    <Route path="/chat" element={<ChatPage />} />
-                    
-                    {/* Protected Customer Routes */}
-                    <Route element={<ProtectedRoute allowedRoles={['buyer', 'admin']} />}>
-                      <Route path="/profile" element={<ProfilePage />} />
-                      <Route path="/profile/edit" element={<ProfileEditPage />} />
-                      <Route path="/settings" element={<AccountSettingsPage />} />
-                      <Route path="/checkout" element={<CheckoutPage />} />
-                      <Route path="/payment" element={<PaymentPage />} />
-                      <Route path="/orders" element={<OrdersPage />} />
-                      <Route path="/orders/unpaid" element={<UnpaidOrdersPage />} />
-                      <Route path="/orders/packed" element={<PackedOrdersPage />} />
-                      <Route path="/orders/shipped" element={<ShippedOrdersPage />} />
-                      <Route path="/orders/rate" element={<RateOrdersPage />} />
-                      <Route path="/order/:id" element={<OrderTrackingPage />} />
-                      <Route path="/wishlist" element={<WishlistPage />} />
-                      <Route path="/loyalty" element={<LoyaltyPage />} />
-                    </Route>
+                {/* Main Application Routes */}
+                <Route element={<MainLayout />}>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/products" element={<ProductsPage />} />
+                  <Route path="/product/:id" element={<ProductDetailPage />} />
+                  <Route path="/seller/:id" element={<SellerProfilePage />} />
+                  <Route path="/cart" element={<CartPage />} />
+                  <Route path="/notifications" element={<NotificationsPage />} />
+                  <Route path="/chat" element={<ChatPage />} />
+                  <Route path="/live" element={<LiveStreamsPage />} />
+                  <Route path="/live/:id" element={<LiveStreamViewPage />} />
+                  
+                  {/* Protected Customer Routes */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="/profile/edit" element={<ProfileEditPage />} />
+                    <Route path="/settings" element={<AccountSettingsPage />} />
+                    <Route path="/checkout" element={<CheckoutPage />} />
+                    <Route path="/payment" element={<PaymentPage />} />
+                    <Route path="/orders" element={<OrdersPage />} />
+                    <Route path="/orders/unpaid" element={<UnpaidOrdersPage />} />
+                    <Route path="/orders/packed" element={<PackedOrdersPage />} />
+                    <Route path="/orders/shipped" element={<ShippedOrdersPage />} />
+                    <Route path="/orders/rate" element={<RateOrdersPage />} />
+                    <Route path="/order/:id" element={<OrderTrackingPage />} />
+                    <Route path="/wishlist" element={<WishlistPage />} />
+                    <Route path="/loyalty" element={<LoyaltyPage />} />
                   </Route>
+                </Route>
 
-                  {/* Seller Routes */}
-                  <Route 
-                    element={
-                      <ProtectedRoute allowedRoles={['seller', 'admin']}>
-                        <SellerLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route path="/seller" element={<SellerDashboard />} />
-                    <Route path="/seller/products" element={<SellerProducts />} />
-                    <Route path="/seller/orders" element={<SellerOrders />} />
-                    <Route path="/seller/reviews" element={<SellerReviews />} />
-                    <Route path="/seller/chat" element={<SellerChat />} />
-                    <Route path="/seller/live" element={<SellerLive />} />
-                    <Route path="/seller/upload" element={<SellerUpload />} />
-                    <Route path="/seller/promotions" element={<SellerPromotions />} />
-                    <Route path="/seller/profile-edit" element={<SellerProfileEdit />} />
-                    <Route path="/seller/notifications" element={<SellerNotifications />} />
-                  </Route>
+                {/* Seller Routes */}
+                <Route 
+                  element={
+                    <ProtectedRoute>
+                      <SellerLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="/seller" element={<SellerDashboard />} />
+                  <Route path="/seller/products" element={<SellerProducts />} />
+                  <Route path="/seller/orders" element={<SellerOrders />} />
+                  <Route path="/seller/reviews" element={<SellerReviews />} />
+                  <Route path="/seller/chat" element={<SellerChat />} />
+                  <Route path="/seller/live" element={<SellerLive />} />
+                  <Route path="/seller/upload" element={<SellerUpload />} />
+                  <Route path="/seller/promotions" element={<SellerPromotions />} />
+                  <Route path="/seller/profile-edit" element={<SellerProfileEdit />} />
+                  <Route path="/seller/notifications" element={<SellerNotifications />} />
+                </Route>
 
-                  {/* Admin Routes */}
-                  <Route 
-                    element={
-                      <ProtectedRoute allowedRoles={['admin']}>
-                        <AdminLayout />
-                      </ProtectedRoute>
-                    }
-                  >
-                    <Route path="/admin" element={<AdminDashboard />} />
-                    <Route path="/admin/users" element={<AdminUsers />} />
-                    <Route path="/admin/categories" element={<AdminCategories />} />
-                    <Route path="/admin/reports" element={<AdminReports />} />
-                    <Route path="/admin/moderation" element={<AdminModeration />} />
-                    <Route path="/admin/complaints" element={<AdminComplaints />} />
-                    <Route path="/admin/promotions" element={<AdminPromotions />} />
-                    <Route path="/admin/commission" element={<AdminCommission />} />
-                    <Route path="/admin/notifications" element={<AdminNotifications />} />
-                  </Route>
+                {/* Admin Routes */}
+                <Route 
+                  element={
+                    <ProtectedRoute>
+                      <AdminLayout />
+                    </ProtectedRoute>
+                  }
+                >
+                  <Route path="/admin" element={<AdminDashboard />} />
+                  <Route path="/admin/users" element={<AdminUsers />} />
+                  <Route path="/admin/categories" element={<AdminCategories />} />
+                  <Route path="/admin/reports" element={<AdminReports />} />
+                  <Route path="/admin/moderation" element={<AdminModeration />} />
+                  <Route path="/admin/complaints" element={<AdminComplaints />} />
+                  <Route path="/admin/promotions" element={<AdminPromotions />} />
+                  <Route path="/admin/commission" element={<AdminCommission />} />
+                  <Route path="/admin/notifications" element={<AdminNotifications />} />
+                </Route>
 
-                  {/* 404 Route */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-                <Toaster />
-              </Router>
-            </CartProvider>
-          </ProductsProvider>
-        </NotificationsProvider>
-      </AuthProvider>
-    </ThemeProvider>
+                {/* 404 Route */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+              <Toaster />
+            </Router>
+          </CartProvider>
+        </ProductsProvider>
+      </NotificationsProvider>
+    </AuthProvider>
   );
 }
 

@@ -89,15 +89,15 @@ function App() {
                     <Route path="/products" element={<ProductsPage />} />
                     <Route path="/product/:id" element={<ProductDetailPage />} />
                     <Route path="/seller/:id" element={<SellerProfilePage />} />
-                    <Route path="/cart" element={<CartPage />} />
-                    <Route path="/notifications" element={<NotificationsPage />} />
-                    <Route path="/chat" element={<ChatPage />} />
-                    <Route path="/chat/:id" element={<ChatPage />} />
-                    <Route path="/live" element={<LiveStreamsPage />} />
-                    <Route path="/live/:id" element={<LiveStreamViewPage />} />
                     
                     {/* Protected Customer Routes */}
-                    <Route element={<ProtectedRoute />}>
+                      <Route element={<ProtectedRoute />}>
+                      <Route path="/cart" element={<CartPage />} />
+                      <Route path="/notifications" element={<NotificationsPage />} />
+                      <Route path="/chat" element={<ChatPage />} />
+                      <Route path="/chat/:id" element={<ChatPage />} />
+                      <Route path="/live" element={<LiveStreamsPage />} />
+                      <Route path="/live/:id" element={<LiveStreamViewPage />} />
                       <Route path="/profile" element={<ProfilePage />} />
                       <Route path="/profile/edit" element={<ProfileEditPage />} />
                       <Route path="/settings" element={<AccountSettingsPage />} />
@@ -117,7 +117,9 @@ function App() {
                   {/* Seller Routes */}
                   <Route
                     element={
-                      <SellerLayout />
+                      <ProtectedRoute>
+                        <SellerLayout />
+                      </ProtectedRoute>
                     }
                   >
                     <Route path="/seller" element={<SellerDashboard />} />

@@ -29,15 +29,6 @@ const Index: React.FC = () => {
   
   useEffect(() => {
     if (activeLiveStreams.length > 0 && showLivePopup) {
-      // Add a delay of 3 seconds before showing the toast
-      setTimeout(() => {
-        toast({
-          title: "Live Streams Available!",
-          description: `${activeLiveStreams.length} sellers are currently streaming. Check it out!`,
-          duration: 5000,
-        });
-      }, 3000);
-      
       // Set a random live stream for popup
       const randomIndex = Math.floor(Math.random() * activeLiveStreams.length);
       setRandomLiveStream(activeLiveStreams[randomIndex]);

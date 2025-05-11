@@ -1,10 +1,10 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Star } from 'lucide-react';
 import { Product } from '@/lib/mockData';
 import { useAuth } from '@/hooks/useAuth';
-import { toast } from '@/hooks/use-toast';
+import { useWishlist } from '@/hooks/useWishlist';
 
 interface ProductCardProps {
   product: Product;
@@ -12,10 +12,7 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { user } = useAuth();
-  const [isInWishlist, setIsInWishlist] = useState(() => {
-    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-    return wishlist.some((item: Product) => item.id === product.id);
-  });
+  const {isProductInWishlist, addProductToWishlist, removeProductFromWishlist} = useWishlist();
   
   // Get seller ID based on seller name
   const getSellerIdFromName = (sellerName: string) => {
@@ -26,32 +23,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const sellerId = getSellerIdFromName(product.seller);
 
-  const handleAddToWishlist = (e: React.MouseEvent) => {
+  const handleAddToWishlist = (e: React.MouseEvent, product: Product) => {
     e.preventDefault();
     e.stopPropagation();
     
-    // Get existing wishlist from localStorage
-    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
-    
-    // Check if product is already in wishlist
-    const existingIndex = wishlist.findIndex((item: Product) => item.id === product.id);
-    
-    if (existingIndex === -1) {
-      // Add to wishlist
-      wishlist.push(product);
-      localStorage.setItem('wishlist', JSON.stringify(wishlist));
-      setIsInWishlist(true);
-      toast({
-        description: `${product.name} added to your wishlist`,
-      });
+    if (isProductInWishlist(product)) {
+      removeProductFromWishlist(product.id);
     } else {
-      // Remove from wishlist
-      wishlist.splice(existingIndex, 1);
-      localStorage.setItem('wishlist', JSON.stringify(wishlist));
-      setIsInWishlist(false);
-      toast({
-        description: `${product.name} removed from your wishlist`,
-      });
+      addProductToWishlist(product);
     }
   };
 
@@ -66,11 +45,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           />
           <button 
             className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow-sm"
-            onClick={handleAddToWishlist}
+            onClick={e => handleAddToWishlist(e, product)}
           >
             <Heart 
               className={`w-5 h-5 transition-colors ${
-                isInWishlist ? 'text-red-500 fill-red-500' : 'text-gray-400 hover:text-primary'
+                isProductInWishlist(product) ? 'text-red-500 fill-red-500' : 'text-gray-400 hover:text-primary'
               }`} 
             />
           </button>

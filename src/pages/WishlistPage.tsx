@@ -3,12 +3,10 @@ import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ProductList from '@/components/products/ProductList';
-import { mockProducts } from '@/lib/mockData';
-
-// Mock wishlist data (in a real app, this would come from an API or context)
-const wishlistItems = mockProducts.slice(0, 4);
+import { useWishlist } from '@/hooks/useWishlist';
 
 const WishlistPage: React.FC = () => {
+  const {items} = useWishlist();
   const navigate = useNavigate();
   
   return (
@@ -23,8 +21,8 @@ const WishlistPage: React.FC = () => {
         <h1 className="text-xl font-semibold ml-2">My Wishlist</h1>
       </div>
       
-      {wishlistItems.length > 0 ? (
-        <ProductList products={wishlistItems} />
+      {items.length > 0 ? (
+        <ProductList products={items} />
       ) : (
         <div className="py-10 text-center">
           <p className="text-gray-500">Your wishlist is empty.</p>

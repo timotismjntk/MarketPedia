@@ -80,15 +80,18 @@ const SellerProductsPage = () => {
     <div className="container mx-auto px-4 py-8 pb-24">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Manage Products</h1>
-        <Button 
-          onClick={handleAddNewProduct}
-          className="bg-primary text-white"
-        >
-          <Plus size={18} className="mr-2" />
-          Add New Product
-        </Button>
+        
+        <div className="flex gap-4">
+          <Button onClick={() => navigate('/seller/products/upload')} className="bg-primary text-white">
+            <Plus size={18} className="mr-2" />
+            Import from Excel/CSV
+          </Button>
+          <Button onClick={handleAddNewProduct} className="bg-primary text-white">
+            <Plus size={18} className="mr-2" />
+            Add New Product
+          </Button>
+        </div>
       </div>
-      
       <Card className="mb-6">
         <CardContent className="p-4">
           <div className="relative mb-4">

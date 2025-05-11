@@ -40,7 +40,6 @@ const DashboardPage: React.FC = () => {
     <div className="app-container px-4 pt-6 pb-20">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-xl font-bold">Seller Dashboard</h1>
-        <p className="text-sm text-gray-500">May 2023</p>
       </div>
       
       {/* Stats Grid */}

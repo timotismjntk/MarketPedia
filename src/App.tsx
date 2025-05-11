@@ -91,7 +91,7 @@ function App() {
                     <Route path="/seller/:id" element={<SellerProfilePage />} />
                     
                     {/* Protected Customer Routes */}
-                      <Route element={<ProtectedRoute />}>
+                    <Route element={<ProtectedRoute />}>
                       <Route path="/cart" element={<CartPage />} />
                       <Route path="/notifications" element={<NotificationsPage />} />
                       <Route path="/chat" element={<ChatPage />} />

@@ -78,7 +78,7 @@ function App() {
         <ProductsProvider>
           <CartProvider>
             <WishlistProvider>
-              <Router basename="MarketPedia">
+              <Router basename="MartPedia">
                 <Routes>
                   {/* Auth Routes */}
                   <Route path="/auth" element={<AuthPage />} />

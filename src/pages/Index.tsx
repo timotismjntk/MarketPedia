@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { toast } from '@/hooks/use-toast';
 import { mockProducts, categories, mockLiveStreams } from '@/lib/mockData';
 import LiveStreamPopup from '@/components/live/LiveStreamPopup';
+import martpediaLogo from '@/assets/image/martpedia-tanpa-title.png';
 
 const filterOptions = [
   { label: 'All Products', value: 'all' },
@@ -114,7 +115,7 @@ const Index: React.FC = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex flex-row items-center">
           <img
-            src="src/assets/image/martpedia-tanpa-title.png"
+            src={martpediaLogo}
             className="w-16 h-16 object-contain"
           />
           <h1 className="text-2xl font-bold text-gray-900 -mt-3 -ml-2">

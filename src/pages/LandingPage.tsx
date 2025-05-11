@@ -2,6 +2,8 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
+import martpediaLogo from './assets/image/martpedia.png';
+
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
@@ -10,7 +12,7 @@ const LandingPage: React.FC = () => {
       {/* Header Section with MartPedia and Image */}
       <div className="flex flex-col items-center text-center -mt-20">
         <img
-          src="src/assets/image/martpedia.png"
+          src={martpediaLogo}
           className="w-64 h-64 object-contain"
         />
         <h1 className="text-2xl font-bold text-gray-900 mb-4">

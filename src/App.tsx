@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route } from 'react-router-dom';
 
 // Main Layout
 import MainLayout from '@/components/layout/MainLayout';
@@ -79,7 +79,7 @@ function App() {
         <ProductsProvider>
           <CartProvider>
             <WishlistProvider>
-              <Router basename="MartPedia">
+              <Router>
                 <Routes>
                   <Route path="/landingPage" element={<LandingPage />} />
 

@@ -23,18 +23,19 @@ const Index: React.FC = () => {
   const [products, setProducts] = useState(mockProducts);
   const [randomLiveStream, setRandomLiveStream] = useState(null);
 
-   // Only get live streams that are actually live
-   const activeLiveStreams = mockLiveStreams.filter(stream => stream.isLive);
+  // Only get live streams that are actually live
+  const activeLiveStreams = mockLiveStreams.filter(stream => stream.isLive);
   
   useEffect(() => {
     if (activeLiveStreams.length > 0) {
+      // Add a delay of 3 seconds before showing the toast
       setTimeout(() => {
         toast({
           title: "Live Streams Available!",
           description: `${activeLiveStreams.length} sellers are currently streaming. Check it out!`,
           duration: 5000,
         });
-      }, 1500);
+      }, 3000);
       
       // Set a random live stream for popup
       const randomIndex = Math.floor(Math.random() * activeLiveStreams.length);

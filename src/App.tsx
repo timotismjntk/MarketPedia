@@ -113,7 +113,6 @@ function App() {
 
                 {/* Seller Routes */}
                 <Route
-                  path="/seller/*"
                   element={
                     <ProtectedRoute roles={["seller", "admin"]}>
                       <SellerLayout />

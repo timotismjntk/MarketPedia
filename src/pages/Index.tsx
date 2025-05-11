@@ -1,5 +1,5 @@
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   ChevronRight, 
@@ -15,11 +15,14 @@ import ProductList from '@/components/products/ProductList';
 import { mockProducts, categories, mockLiveStreams } from '@/lib/mockData';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/hooks/use-toast';
+import LiveStreamPopup from '@/components/live/LiveStreamPopup';
 
 function Index() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { toast } = useToast();
+  const [showLivePopup, setShowLivePopup] = useState(false);
+  const [randomLiveStream, setRandomLiveStream] = useState(null);
   
   // Only get live streams that are actually live
   const activeLiveStreams = mockLiveStreams.filter(stream => stream.isLive);
@@ -32,8 +35,9 @@ function Index() {
   const newArrivals = [...mockProducts]
     .sort(() => Math.random() - 0.5)
     .slice(0, 4);
-    
-  const formatTimeAgo = (dateString: string) => {
+
+  // Format time for display
+  const formatTimeAgo = (dateString) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffMs = now.getTime() - date.getTime();
@@ -42,8 +46,9 @@ function Index() {
     if (diffMins < 60) return `${diffMins}m ago`;
     return `${Math.floor(diffMins / 60)}h ago`;
   };
-
-  // Show a notification about live streams when the page loads
+  
+  // Show a notification about live streams when the page loads 
+  // and pick a random stream to show in popup
   useEffect(() => {
     if (activeLiveStreams.length > 0) {
       setTimeout(() => {
@@ -53,6 +58,15 @@ function Index() {
           duration: 5000,
         });
       }, 1500);
+      
+      // Set a random live stream for popup
+      const randomIndex = Math.floor(Math.random() * activeLiveStreams.length);
+      setRandomLiveStream(activeLiveStreams[randomIndex]);
+      
+      // Show the popup after a delay
+      setTimeout(() => {
+        setShowLivePopup(true);
+      }, 3000);
     }
   }, []);
   
@@ -68,80 +82,6 @@ function Index() {
           <span className="text-gray-500">Search products, brands, and more...</span>
         </div>
       </div>
-      
-      {/* Live Streams Section - Moved to the top for more visibility */}
-      {activeLiveStreams.length > 0 && (
-        <div className="py-4 relative">
-          <div className="flex justify-between items-center mb-3">
-            <div className="flex items-center">
-              <Badge variant="destructive" className="mr-2">LIVE</Badge>
-              <h2 className="font-semibold text-lg">Streaming Now</h2>
-            </div>
-            <Link to="/live" className="flex items-center text-sm text-primary">
-              <span>See all</span>
-              <ChevronRight className="h-4 w-4" />
-            </Link>
-          </div>
-          
-          <div className="flex gap-3 overflow-x-auto pb-2 -mx-4 px-4">
-            {activeLiveStreams.map(stream => (
-              <div
-                key={stream.id}
-                className="flex-none w-[280px] rounded-lg overflow-hidden border hover:shadow-md transition-shadow cursor-pointer"
-                onClick={() => navigate(`/live/${stream.id}`)}
-              >
-                <div className="relative">
-                  <img 
-                    src={stream.thumbnailImage}
-                    alt={stream.title}
-                    className="w-full h-40 object-cover"
-                  />
-                  <div className="absolute top-2 left-2 flex space-x-2">
-                    <Badge variant="destructive" className="flex items-center">
-                      <span className="w-2 h-2 bg-white rounded-full mr-1 animate-pulse"></span>
-                      LIVE
-                    </Badge>
-                    <Badge variant="secondary" className="flex items-center">
-                      <Users size={14} className="mr-1" />
-                      {stream.viewers}
-                    </Badge>
-                  </div>
-                  <div className="absolute top-2 right-2">
-                    <Badge variant="outline" className="bg-black/60 text-white border-none">
-                      {formatTimeAgo(stream.startedAt)}
-                    </Badge>
-                  </div>
-                </div>
-                
-                <div className="p-3">
-                  <div className="flex items-center mb-2">
-                    <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden mr-2">
-                      <img 
-                        src={stream.sellerAvatar}
-                        alt={stream.sellerName}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <span className="font-medium text-sm">{stream.sellerName}</span>
-                  </div>
-                  <h3 className="font-medium">{stream.title}</h3>
-                </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* Call to action button */}
-          <div className="flex justify-center mt-3">
-            <Button 
-              onClick={() => navigate('/live')}
-              className="bg-red-600 hover:bg-red-700 text-white"
-            >
-              <Video className="mr-2 h-4 w-4" />
-              View All Live Streams
-            </Button>
-          </div>
-        </div>
-      )}
       
       {/* Categories */}
       <div className="py-4">
@@ -185,7 +125,13 @@ function Index() {
         />
       </div>
       
-      {/* Removed the CTA for Seller section */}
+      {/* Random Live Stream Popup */}
+      {showLivePopup && randomLiveStream && (
+        <LiveStreamPopup 
+          stream={randomLiveStream} 
+          onClose={() => setShowLivePopup(false)}
+        />
+      )}
     </div>
   );
 }

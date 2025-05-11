@@ -185,30 +185,7 @@ function Index() {
         />
       </div>
       
-      {/* CTA for Seller */}
-      {!user?.role || user?.role === 'buyer' ? (
-        <div className="py-4 my-4 bg-gradient-to-r from-primary to-purple-700 rounded-lg text-white p-5 text-center">
-          <h2 className="text-xl font-bold mb-2">Start Selling Today!</h2>
-          <p className="mb-4">Join thousands of sellers and reach millions of customers.</p>
-          <div className="flex flex-col sm:flex-row justify-center gap-3">
-            <Button 
-              variant="outline"
-              className="text-white border-white hover:bg-white hover:text-primary"
-              onClick={() => navigate('/auth')}
-            >
-              Create Seller Account
-            </Button>
-            <Button 
-              variant="default"
-              className="bg-white text-primary hover:bg-gray-100"
-              onClick={() => navigate('/live')}
-            >
-              <Video size={18} className="mr-2" />
-              Watch Live Streams
-            </Button>
-          </div>
-        </div>
-      ) : null}
+      {/* Removed the CTA for Seller section */}
     </div>
   );
 }

@@ -2,7 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
-import martpediaLogo from './assets/image/martpedia.png';
+import martpediaLogo from '@/assets/image/martpedia.png';
 
 const LandingPage: React.FC = () => {
   const navigate = useNavigate();

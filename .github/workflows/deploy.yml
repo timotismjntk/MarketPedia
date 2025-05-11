@@ -4,14 +4,17 @@ on:
   push:
     branches:
       - main  # or your default branch
-
+ 
 permissions:
-  contents: write
+  id-token: write 
+  contents: write 
+  pages: write   
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    environment: production  # Make sure to specify the environment here
+    
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3

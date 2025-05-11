@@ -3,23 +3,19 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Home, 
-  Search, 
   ShoppingCart, 
-  User, 
-  Bell, 
   Video,
-  Package
+  Heart, 
+  User
 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useCart } from '@/hooks/useCart';
-import { useNotifications } from '@/hooks/useNotifications';
 
 const BottomNavigation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useAuth();
   const { items } = useCart();
-  const { unreadCount } = useNotifications();
   
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
@@ -57,16 +53,6 @@ const BottomNavigation: React.FC = () => {
         
         <button
           className={`p-2 flex flex-col items-center ${
-            isActive('/products') ? 'text-primary' : 'text-gray-500'
-          }`}
-          onClick={() => handleNavClick('/products')}
-        >
-          <Search size={20} />
-          <span className="text-xs mt-1">Discover</span>
-        </button>
-        
-        <button
-          className={`p-2 flex flex-col items-center ${
             isActive('/cart') ? 'text-primary' : 'text-gray-500'
           } relative`}
           onClick={() => handleNavClick('/cart')}
@@ -82,17 +68,12 @@ const BottomNavigation: React.FC = () => {
         
         <button
           className={`p-2 flex flex-col items-center ${
-            isActive('/notifications') ? 'text-primary' : 'text-gray-500'
-          } relative`}
-          onClick={() => handleNavClick('/notifications')}
+            isActive('/wishlist') ? 'text-primary' : 'text-gray-500'
+          }`}
+          onClick={() => handleNavClick('/wishlist')}
         >
-          <Bell size={20} />
-          {unreadCount > 0 && (
-            <span className="absolute top-1 right-1 bg-red-500 text-white rounded-full text-[10px] w-4 h-4 flex items-center justify-center">
-              {unreadCount > 9 ? '9+' : unreadCount}
-            </span>
-          )}
-          <span className="text-xs mt-1">Notifications</span>
+          <Heart size={20} />
+          <span className="text-xs mt-1">Wishlist</span>
         </button>
         
         {user ? (
@@ -103,7 +84,7 @@ const BottomNavigation: React.FC = () => {
             onClick={() => handleNavClick('/profile')}
           >
             <User size={20} />
-            <span className="text-xs mt-1">Account</span>
+            <span className="text-xs mt-1">Profile</span>
           </button>
         ) : (
           <button
@@ -111,7 +92,7 @@ const BottomNavigation: React.FC = () => {
             onClick={() => handleNavClick('/auth')}
           >
             <User size={20} />
-            <span className="text-xs mt-1">Sign In</span>
+            <span className="text-xs mt-1">Profile</span>
           </button>
         )}
       </div>

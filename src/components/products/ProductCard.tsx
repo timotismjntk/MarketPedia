@@ -1,9 +1,10 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Heart, Star } from 'lucide-react';
 import { Product } from '@/lib/mockData';
 import { useAuth } from '@/hooks/useAuth';
+import { toast } from '@/hooks/use-toast';
 
 interface ProductCardProps {
   product: Product;
@@ -11,6 +12,10 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { user } = useAuth();
+  const [isInWishlist, setIsInWishlist] = useState(() => {
+    const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
+    return wishlist.some((item: Product) => item.id === product.id);
+  });
   
   // Get seller ID based on seller name
   const getSellerIdFromName = (sellerName: string) => {
@@ -23,21 +28,30 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const handleAddToWishlist = (e: React.MouseEvent) => {
     e.preventDefault();
-    
-    // Add to wishlist logic here
-    // In a real app, you'd integrate with a wishlist provider/state
-    console.log('Adding to wishlist:', product);
+    e.stopPropagation();
     
     // Get existing wishlist from localStorage
     const wishlist = JSON.parse(localStorage.getItem('wishlist') || '[]');
     
     // Check if product is already in wishlist
-    const isInWishlist = wishlist.some((item: Product) => item.id === product.id);
+    const existingIndex = wishlist.findIndex((item: Product) => item.id === product.id);
     
-    if (!isInWishlist) {
+    if (existingIndex === -1) {
       // Add to wishlist
       wishlist.push(product);
       localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      setIsInWishlist(true);
+      toast({
+        description: `${product.name} added to your wishlist`,
+      });
+    } else {
+      // Remove from wishlist
+      wishlist.splice(existingIndex, 1);
+      localStorage.setItem('wishlist', JSON.stringify(wishlist));
+      setIsInWishlist(false);
+      toast({
+        description: `${product.name} removed from your wishlist`,
+      });
     }
   };
 
@@ -54,7 +68,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             className="absolute top-2 right-2 bg-white p-1.5 rounded-full shadow-sm"
             onClick={handleAddToWishlist}
           >
-            <Heart className="w-5 h-5 text-gray-400 hover:text-primary transition-colors" />
+            <Heart 
+              className={`w-5 h-5 transition-colors ${
+                isInWishlist ? 'text-red-500 fill-red-500' : 'text-gray-400 hover:text-primary'
+              }`} 
+            />
           </button>
           {!product.inStock && (
             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">

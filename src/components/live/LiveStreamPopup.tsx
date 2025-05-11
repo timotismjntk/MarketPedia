@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { X, Maximize2, Minimize2 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -12,7 +11,7 @@ interface LiveStreamPopupProps {
     thumbnailImage: string;
     sellerName: string;
   };
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const LiveStreamPopup: React.FC<LiveStreamPopupProps> = ({ stream, onClose }) => {
@@ -22,6 +21,13 @@ const LiveStreamPopup: React.FC<LiveStreamPopupProps> = ({ stream, onClose }) =>
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [isMinimized, setIsMinimized] = useState(false);
   const popupRef = useRef<HTMLDivElement>(null);
+
+  // Handle closing the popup
+  const handleClose = () => {
+    if (onClose) {
+      onClose();
+    }
+  };
 
   // Calculate a good initial position (bottom right corner)
   useEffect(() => {
@@ -211,7 +217,7 @@ const LiveStreamPopup: React.FC<LiveStreamPopupProps> = ({ stream, onClose }) =>
             className="ml-1 p-1 hover:bg-white/10 rounded"
             onClick={(e) => {
               e.stopPropagation();
-              onClose();
+              handleClose();
             }}
           >
             <X size={16} />
@@ -249,7 +255,7 @@ const LiveStreamPopup: React.FC<LiveStreamPopupProps> = ({ stream, onClose }) =>
                 className="h-6 w-6 ml-1 bg-black/50 text-white hover:bg-black/70 hover:text-white"
                 onClick={(e) => {
                   e.stopPropagation();
-                  onClose();
+                  handleClose();
                 }}
               >
                 <X size={14} />

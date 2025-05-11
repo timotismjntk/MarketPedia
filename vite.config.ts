@@ -9,7 +9,6 @@ export default defineConfig(({ mode }) => ({
     host: "::",
     port: 8080,
   },
-  base: '/MarketPedia/',  // Make sure this matches your GitHub repo name
   plugins: [
     react(),
     mode === 'development' &&

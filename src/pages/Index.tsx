@@ -112,7 +112,9 @@ const Index: React.FC = () => {
   return (
     <div className="app-container px-4 pt-4">
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-2xl font-bold text-gray-900">MartPedia</h1>
+      <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+        MartPedia
+      </h1>
         <div className="flex items-center gap-3">
           <Link to={`/notifications`}>
             <button className="p-2 text-gray-600 relative">

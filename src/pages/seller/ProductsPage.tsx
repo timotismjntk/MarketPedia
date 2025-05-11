@@ -78,15 +78,24 @@ const SellerProductsPage = () => {
 
   return (
     <div className="container mx-auto px-4 py-8 pb-24">
-      <div className="flex justify-between items-center mb-6">
+      <div>
         <h1 className="text-2xl font-bold">Manage Products</h1>
-        <Button 
-          onClick={handleAddNewProduct}
-          className="bg-primary text-white"
-        >
-          <Plus size={18} className="mr-2" />
-          Add New Product
-        </Button>
+        <div className="flex gap-4 items-center mb-6 mt-4">
+          <Button 
+            onClick={handleAddNewProduct}
+            className="bg-primary text-white"
+          >
+            <Plus size={18} className="mr-2" />
+            Add New Product
+          </Button>
+          <Button 
+            onClick={() => navigate('upload')}
+            className="bg-primary text-white"
+          >
+            <Plus size={18} className="mr-2" />
+            Import CSV/Excel
+          </Button>
+        </div>
       </div>
       
       <Card className="mb-6">

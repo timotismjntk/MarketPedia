@@ -286,7 +286,7 @@ const AdminDashboardPage = () => {
           </CardContent>
           <CardFooter>
             <Button asChild variant="outline" className="w-full">
-              <Link to="/admin/settings/commission">
+              <Link to="/admin/commission">
                 <span className="mr-1">Configure Commissions</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>

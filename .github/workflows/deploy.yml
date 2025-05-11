@@ -8,13 +8,12 @@ on:
 permissions:
   id-token: write 
   contents: write 
-  pages: write   
+  pages: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: production  # Make sure to specify the environment here
-    
+
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3

@@ -6,9 +6,9 @@ const LandingPage: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-white flex flex-col items-center justify-between px-4 py-8">
+    <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-8">
       {/* Header Section with MartPedia and Image */}
-      <div className="flex flex-col items-center text-center">
+      <div className="flex flex-col items-center text-center -mt-20">
         <img
           src="src/assets/image/martpedia.png"
           className="w-64 h-64 object-contain"

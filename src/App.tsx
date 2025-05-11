@@ -70,6 +70,7 @@ import './App.css';
 // Toast component
 import { Toaster } from "@/components/ui/toaster";
 import { WishlistProvider } from './hooks/useWishlist';
+import LandingPage from './pages/LandingPage';
 
 function App() {
   return (
@@ -80,6 +81,8 @@ function App() {
             <WishlistProvider>
               <Router basename="MartPedia">
                 <Routes>
+                  <Route path="/landingPage" element={<LandingPage />} />
+
                   {/* Auth Routes */}
                   <Route path="/auth" element={<AuthPage />} />
 

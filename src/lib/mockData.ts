@@ -1,5 +1,20 @@
 
 // Mock data for products, categories, etc.
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'buyer' | 'seller' | 'admin';
+  avatar?: string;
+}
+
+export const currentUser: User = {
+  id: 'user1',
+  name: 'John Doe',
+  email: 'john@example.com',
+  role: 'buyer',
+  avatar: '/placeholder.svg'
+};
 
 export interface Product {
   id: string;

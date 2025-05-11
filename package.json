@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://timotismjntk.github.io/MartPedia/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",

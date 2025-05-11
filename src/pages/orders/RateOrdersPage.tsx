@@ -1,8 +1,11 @@
 
-import React from 'react';
-import { ArrowLeft, Star, ChevronRight, Package, CheckCircle } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Star, ChevronRight, Package, CheckCircle, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import { mockProducts } from '@/lib/mockData';
+import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
+import { Textarea } from '@/components/ui/textarea';
 
 // Mock orders to be rated
 const mockOrdersToRate = [
@@ -10,41 +13,51 @@ const mockOrdersToRate = [
     id: 'ORD-0123',
     date: '2023-04-15',
     total: 79.98,
-    items: [
-      { 
-        id: 'prod-1',
-        name: 'Modern Wireless Earbuds',
-        price: 59.99,
-        image: '/placeholder.svg'
-      },
-      { 
-        id: 'prod-2',
-        name: 'Phone Charging Cable',
-        price: 19.99,
-        image: '/placeholder.svg'
-      }
-    ],
+    items: mockProducts.slice(0, Math.floor(Math.random() * 5) + 1),
     deliveredOn: 'April 20, 2023'
   },
   {
     id: 'ORD-1234',
     date: '2023-04-10',
     total: 129.99,
-    items: [
-      { 
-        id: 'prod-3',
-        name: 'Smart Home Speaker',
-        price: 129.99,
-        image: '/placeholder.svg'
-      }
-    ],
+    items: mockProducts.slice(0, Math.floor(Math.random() * 3) + 1),
     deliveredOn: 'April 17, 2023'
   }
 ];
 
 const RateOrdersPage: React.FC = () => {
   const navigate = useNavigate();
-  
+  const [showDialogReview, setShowDialogReview] = useState(false);
+  const [userReview, setUserReview] = useState('');
+  const [userRating, setUserRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+
+  const handleRatingClick = (rating: number) => {
+    setUserRating(rating);
+  };
+
+  const renderStars = (rating: number, interactive = false) => {
+    return (
+      <div className="flex space-x-1">
+        {[1, 2, 3, 4, 5].map((star) => (
+          <Star 
+            key={star} 
+            size={interactive ? 24 : 16} 
+            className={`${
+              (interactive && (star <= hoverRating || (!hoverRating && star <= userRating))) || 
+              (!interactive && star <= rating)
+                ? "fill-yellow-400 text-yellow-400" 
+                : "text-gray-300"
+            } ${interactive ? "cursor-pointer" : ""}`} 
+            onClick={interactive ? () => handleRatingClick(star) : undefined}
+            onMouseEnter={interactive ? () => setHoverRating(star) : undefined}
+            onMouseLeave={interactive ? () => setHoverRating(0) : undefined}
+          />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="app-container px-4 pt-4 pb-20">
       <div className="flex items-center mb-6">
@@ -98,7 +111,7 @@ const RateOrdersPage: React.FC = () => {
                           variant="outline" 
                           size="sm"
                           className="flex items-center"
-                          onClick={() => navigate(`/product/${item.id}?rate=true`)}
+                          onClick={() => setShowDialogReview(true)}
                         >
                           <Star className="w-4 h-4 mr-1 text-yellow-500" />
                           <span>Write a Review</span>
@@ -108,6 +121,46 @@ const RateOrdersPage: React.FC = () => {
                   </div>
                 ))}
               </div>
+
+              {/* Write a review */}
+              {showDialogReview && (
+                <div 
+                  className="fixed inset-0 bg-gray-500/50 flex items-center justify-center p-4 z-50"
+                  onClick={() => setShowDialogReview(false)}
+                >
+                  <Card 
+                    className="w-full max-w-md bg-white rounded-xl"
+                    onClick={(e) => e.stopPropagation()} // Prevent closing when clicking inside the card
+                  >
+                    <CardHeader className="flex flex-row items-center justify-between">
+                      <h3 className="text-lg font-semibold">Write a Review</h3>
+                      <button
+                        className="text-gray-500 hover:text-gray-700"
+                        onClick={() => setShowDialogReview(false)}
+                      >
+                        <X size={20} />
+                      </button>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="mb-4">
+                        <p className="mb-2 font-medium">Rating</p>
+                        {renderStars(userRating, true)}
+                      </div>
+                      <Textarea
+                        placeholder="Share your experience with this product..."
+                        value={userReview}
+                        onChange={(e) => setUserReview(e.target.value)}
+                        className="min-h-[100px]"
+                      />
+                    </CardContent>
+                    <CardFooter className="flex justify-end">
+                      <Button onClick={() => setShowDialogReview(false)}>
+                        Submit Review
+                      </Button>
+                    </CardFooter>
+                </Card>
+              </div>
+              )}
               
               <div className="flex justify-between items-center p-4 bg-gray-50 border-t border-gray-100">
                 <div className="flex items-center">

@@ -232,30 +232,6 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, initialRevie
         </CardContent>
       </Card>
       
-      {/* Write a review */}
-      <Card className="mb-6">
-        <CardHeader>
-          <h3 className="text-lg font-semibold">Write a Review</h3>
-        </CardHeader>
-        <CardContent>
-          <div className="mb-4">
-            <p className="mb-2 font-medium">Rating</p>
-            {renderStars(userRating, true)}
-          </div>
-          <Textarea
-            placeholder="Share your experience with this product..."
-            value={userReview}
-            onChange={(e) => setUserReview(e.target.value)}
-            className="min-h-[100px]"
-          />
-        </CardContent>
-        <CardFooter className="flex justify-end">
-          <Button onClick={handleSubmitReview}>
-            Submit Review
-          </Button>
-        </CardFooter>
-      </Card>
-      
       {/* Reviews list */}
       <div className="space-y-4">
         {reviews.length > 0 ? (

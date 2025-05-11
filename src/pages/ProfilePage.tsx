@@ -1,161 +1,238 @@
-
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
 import { 
-  User, 
-  Edit, 
-  ShoppingBag, 
-  Heart, 
-  Settings, 
-  LogOut,
-  MapPin,
-  Phone,
-  Mail
+  User, Settings, LogOut, ShoppingBag, 
+  Heart, Star, Truck, MapPin, Gem, Bell, Edit,
+  Package, CheckCircle
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { currentUser } from '@/lib/mockData';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '@/hooks/useAuth';
+import { Button } from '@/components/ui/button';
+import { useNotifications } from '@/hooks/useNotifications';
 
-const ProfilePage = () => {
+// Import address and payment types from localStorage
+interface Address {
+  id: string;
+  name: string;
+  phone: string;
+  street: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  isDefault: boolean;
+}
+
+interface PaymentMethod {
+  id: string;
+  type: 'credit-card' | 'e-wallet' | 'bank-transfer';
+  name: string;
+  details: string;
+  isDefault: boolean;
+}
+
+// Define order status type for filtering
+type OrderStatus = 'unpaid' | 'packed' | 'shipped' | 'rate' | 'all';
+
+const ProfilePage: React.FC = () => {
+  const navigate = useNavigate();
   const { user, logout } = useAuth();
-  const [activeTab, setActiveTab] = useState<string>('activity');
-
-  const handleLogout = () => {
-    logout();
+  const { unreadCount } = useNotifications();
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethod[]>([]);
+  
+  useEffect(() => {
+    // Load addresses and payment methods from localStorage
+    const savedAddresses = localStorage.getItem('userAddresses');
+    const savedPayments = localStorage.getItem('userPaymentMethods');
+    
+    if (savedAddresses) {
+      setAddresses(JSON.parse(savedAddresses));
+    }
+    
+    if (savedPayments) {
+      setPaymentMethods(JSON.parse(savedPayments));
+    }
+  }, []);
+  
+  const handleNavigateToOrders = (status: OrderStatus) => {
+    // Navigate to specific order status page
+    navigate(`/orders/${status}`);
   };
   
-  if (!user) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <div>Please log in to view your profile</div>
-      </div>
-    );
-  }
-
+  const handleLogout = () => {
+    logout();
+    navigate('/auth');
+  };
+  
   return (
-    <div className="app-container">
-      {/* Profile Header */}
-      <div className="bg-gray-50 p-4 rounded-lg mb-4">
-        <div className="flex items-center gap-4">
-          <Avatar className="h-20 w-20 border-4 border-white shadow-md">
-            <AvatarImage src={user.avatar || ''} alt={user.name} />
-            <AvatarFallback className="bg-primary text-white text-xl">
-              {user.name.charAt(0)}
-            </AvatarFallback>
-          </Avatar>
-          
-          <div className="flex-1">
-            <h1 className="text-2xl font-bold">{user.name}</h1>
-            <p className="text-gray-500">{user.email}</p>
-            <div className="flex gap-2 mt-2">
-              <Button variant="outline" size="sm" asChild>
-                <Link to="/profile/edit">
-                  <Edit className="mr-1 h-4 w-4" /> Edit Profile
-                </Link>
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <LogOut className="mr-1 h-4 w-4" /> Logout
-              </Button>
+    <div className="min-h-screen bg-white font-sans">
+      {/* Header */}
+      <header className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+          <h1 className="text-xl font-bold text-gray-800">My Account</h1>
+          <Link to="/profile/edit">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="flex items-center gap-2 text-primary hover:text-primary-600 transition-colors"
+            >
+              <Edit size={16} />
+              Edit
+            </Button>
+          </Link>
+        </div>
+      </header>
+
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        {/* Profile Summary */}
+        <div className="bg-white rounded-xl p-6 mb-6 border border-gray-100">
+          <div className="flex items-center">
+            <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center">
+              {currentUser.avatar ? (
+                <img
+                  src={currentUser.avatar}
+                  alt={currentUser.name}
+                  className="w-full h-full rounded-full object-cover"
+                />
+              ) : (
+                <User size={32} className="text-primary" />
+              )}
+            </div>
+            <div className="ml-4">
+              <h2 className="text-lg font-semibold text-gray-800">{currentUser.name}</h2>
+              <p className="text-sm text-gray-500">{currentUser.email}</p>
+            </div>
+          </div>
+          {addresses.length > 0 && (
+            <div className="mt-4 pt-4 border-t border-gray-100">
+              <div className="flex items-start">
+                <MapPin className="text-gray-400 mt-1" size={16} />
+                <div className="ml-3">
+                  <div className="flex items-center">
+                    <span className="text-sm font-medium text-gray-700">Default Address</span>
+                    <Link to="/profile/edit" className="ml-2 text-xs text-primary hover:text-primary-600">
+                      Change
+                    </Link>
+                  </div>
+                  {addresses.find((a) => a.isDefault) && (
+                    <p className="text-sm text-gray-500 mt-1">
+                      {addresses.find((a) => a.isDefault)?.street},{' '}
+                      {addresses.find((a) => a.isDefault)?.city},{' '}
+                      {addresses.find((a) => a.isDefault)?.state}{' '}
+                      {addresses.find((a) => a.isDefault)?.zipCode}
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Order Status */}
+        <div className="mb-6">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="text-lg font-semibold text-gray-800">My Orders</h2>
+            <Link to="/orders" className="text-sm text-primary hover:text-primary-600">
+              See All
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div
+              className="flex flex-col items-center p-4 bg-white rounded-xl border border-gray-100 hover:bg-primary/10 transition-colors cursor-pointer"
+              onClick={() => handleNavigateToOrders('unpaid')}
+            >
+              <ShoppingBag size={24} className="text-primary mb-2" />
+              <span className="text-sm font-medium text-gray-700">Unpaid</span>
+            </div>
+            <div
+              className="flex flex-col items-center p-4 bg-white rounded-xl border border-gray-100 hover:bg-primary/10 transition-colors cursor-pointer"
+              onClick={() => handleNavigateToOrders('packed')}
+            >
+              <Package size={24} className="text-primary mb-2" />
+              <span className="text-sm font-medium text-gray-700">Packed</span>
+            </div>
+            <div
+              className="flex flex-col items-center p-4 bg-white rounded-xl border border-gray-100 hover:bg-primary/10 transition-colors cursor-pointer"
+              onClick={() => handleNavigateToOrders('shipped')}
+            >
+              <Truck size={24} className="text-primary mb-2" />
+              <span className="text-sm font-medium text-gray-700">Shipped</span>
+            </div>
+            <div
+              className="flex flex-col items-center p-4 bg-white rounded-xl border border-gray-100 hover:bg-primary/10 transition-colors cursor-pointer"
+              onClick={() => handleNavigateToOrders('rate')}
+            >
+              <Star size={24} className="text-primary mb-2" />
+              <span className="text-sm font-medium text-gray-700">Rate</span>
             </div>
           </div>
         </div>
-        
-        <div className="grid grid-cols-2 gap-4 mt-4">
-          <div className="flex items-center text-sm text-gray-500">
-            <MapPin className="h-4 w-4 mr-1" />
-            <span>Jakarta, Indonesia</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <Phone className="h-4 w-4 mr-1" />
-            <span>{user.phone || 'Phone not added'}</span>
-          </div>
-          <div className="flex items-center text-sm text-gray-500">
-            <Mail className="h-4 w-4 mr-1" />
-            <span>{user.email}</span>
+
+        {/* Account Settings */}
+        <div className="bg-white rounded-xl border border-gray-100">
+          <h3 className="text-lg font-semibold text-gray-800 px-6 pt-6 pb-4">Account Settings</h3>
+          <div className="divide-y divide-gray-100">
+            <Link to="/loyalty">
+              <div className="flex items-center px-6 py-4 hover:bg-primary/10 transition-colors">
+                <Gem size={20} className="text-gray-500 mr-4" />
+                <span className="text-gray-700 font-medium">Loyalty</span>
+              </div>
+            </Link>
+            <Link to="/notifications">
+              <div className="flex items-center px-6 py-4 hover:bg-primary/10 transition-colors justify-between">
+                <div className="flex items-center">
+                  <Bell size={20} className="text-gray-500 mr-4" />
+                  <span className="text-gray-700 font-medium">Notifications</span>
+                </div>
+                {unreadCount > 0 && (
+                  <span className="bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                    {unreadCount > 9 ? '9+' : unreadCount}
+                  </span>
+                )}
+              </div>
+            </Link>
+            <Link to="/settings/account">
+              <div className="flex items-center px-6 py-4 hover:bg-primary/10 transition-colors">
+                <Settings size={20} className="text-gray-500 mr-4" />
+                <span className="text-gray-700 font-medium">Account Settings</span>
+              </div>
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="w-full flex items-center px-6 py-4 text-red-500 hover:bg-red-50 transition-colors"
+            >
+              <LogOut size={20} className="mr-4" />
+              <span className="font-medium">Logout</span>
+            </button>
           </div>
         </div>
-      </div>
-      
-      {/* Quick Actions */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-4">
-        <Card className="hover:border-primary cursor-pointer transition-all">
-          <Link to="/orders">
-            <CardContent className="p-3 flex flex-col items-center">
-              <ShoppingBag className="h-6 w-6 text-primary mb-1" />
-              <span className="text-sm">Orders</span>
-            </CardContent>
-          </Link>
-        </Card>
-        <Card className="hover:border-primary cursor-pointer transition-all">
-          <Link to="/wishlist">
-            <CardContent className="p-3 flex flex-col items-center">
-              <Heart className="h-6 w-6 text-primary mb-1" />
-              <span className="text-sm">Wishlist</span>
-            </CardContent>
-          </Link>
-        </Card>
-        <Card className="hover:border-primary cursor-pointer transition-all">
-          <Link to="/settings">
-            <CardContent className="p-3 flex flex-col items-center">
-              <Settings className="h-6 w-6 text-primary mb-1" />
-              <span className="text-sm">Settings</span>
-            </CardContent>
-          </Link>
-        </Card>
-        <Card className="hover:border-primary cursor-pointer transition-all" onClick={handleLogout}>
-          <CardContent className="p-3 flex flex-col items-center">
-            <LogOut className="h-6 w-6 text-primary mb-1" />
-            <span className="text-sm">Logout</span>
-          </CardContent>
-        </Card>
-      </div>
-      
-      {/* User Content */}
-      <div className="mb-20">
-        {/* Content tabs will go here */}
-        <div className="flex border-b mb-4 overflow-x-auto">
-          <button
-            className={`px-4 py-2 ${
-              activeTab === 'activity' 
-              ? 'border-b-2 border-primary text-primary' 
-              : 'text-gray-500'
-            }`}
-            onClick={() => setActiveTab('activity')}
-          >
-            Activity
-          </button>
-          <button
-            className={`px-4 py-2 ${
-              activeTab === 'reviews' 
-              ? 'border-b-2 border-primary text-primary' 
-              : 'text-gray-500'
-            }`}
-            onClick={() => setActiveTab('reviews')}
-          >
-            Reviews
-          </button>
-        </div>
-        
-        {/* Tab content */}
-        {activeTab === 'activity' && (
-          <div className="space-y-4">
-            <div className="text-center py-8 text-gray-500">
-              <User size={32} className="mx-auto text-gray-300 mb-2" />
-              <p>No recent activity to show</p>
-            </div>
+
+        {/* Mobile Bottom Navigation */}
+        <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-100 lg:hidden">
+          <div className="flex justify-around py-3">
+            <Link to="/orders" className="flex flex-col items-center text-gray-600 hover:text-primary">
+              <ShoppingBag size={20} />
+              <span className="text-xs mt-1">Orders</span>
+            </Link>
+            <Link to="/loyalty" className="flex flex-col items-center text-gray-600 hover:text-primary">
+              <Gem size={20} />
+              <span className="text-xs mt-1">Loyalty</span>
+            </Link>
+            <Link to="/notifications" className="flex flex-col items-center text-gray-600 hover:text-primary relative">
+              <Bell size={20} />
+              {unreadCount > 0 && (
+                <span className="absolute top-0 right-0 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  {unreadCount > 9 ? '9+' : unreadCount}
+                </span>
+              )}
+              <span className="text-xs mt-1">Notifications</span>
+            </Link>
+            <Link to="/settings/account" className="flex flex-col items-center text-gray-600 hover:text-primary">
+              <Settings size={20} />
+              <span className="text-xs mt-1">Settings</span>
+            </Link>
           </div>
-        )}
-        
-        {activeTab === 'reviews' && (
-          <div className="space-y-4">
-            <div className="text-center py-8 text-gray-500">
-              <User size={32} className="mx-auto text-gray-300 mb-2" />
-              <p>No reviews yet</p>
-            </div>
-          </div>
-        )}
+        </nav>
       </div>
     </div>
   );

@@ -112,9 +112,15 @@ const Index: React.FC = () => {
   return (
     <div className="app-container px-4 pt-4">
       <div className="flex justify-between items-center mb-4">
-      <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-        MartPedia
-      </h1>
+        <div className="flex flex-row items-center">
+          <img
+            src="src/assets/image/martpedia-tanpa-title.png"
+            className="w-16 h-16 object-contain"
+          />
+          <h1 className="text-2xl font-bold text-gray-900 -mt-3 -ml-2">
+            MartPedia
+          </h1>
+        </div>
         <div className="flex items-center gap-3">
           <Link to={`/notifications`}>
             <button className="p-2 text-gray-600 relative">

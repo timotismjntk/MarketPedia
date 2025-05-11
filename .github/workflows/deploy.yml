@@ -6,7 +6,9 @@ on:
       - main  # or your default branch
 
 permissions:
-  contents: write
+  id-token: write 
+  contents: write 
+  pages: write
 
 jobs:
   deploy:
